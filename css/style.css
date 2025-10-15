@@ -204,7 +204,7 @@ h1, h2, h3, h4, h5, h6, figure {
   display: -moz-inline-stack;
   display: inline-block;
   zoom: 1;
-  *display: inline;
+  
   -webkit-transition: 0.3s;
   -o-transition: 0.3s;
   transition: 0.3s;
@@ -761,13 +761,13 @@ h1, h2, h3, h4, h5, h6, figure {
   display: -moz-inline-stack;
   display: inline-block;
   zoom: 1;
-  *display: inline;
+  
 }
 .fh5co-social-icons li a {
   display: -moz-inline-stack;
   display: inline-block;
   zoom: 1;
-  *display: inline;
+  
   color: #F14E95;
   padding-left: 10px;
   padding-right: 10px;
@@ -1224,7 +1224,7 @@ form label {
   display: -moz-inline-stack;
   display: inline-block;
   zoom: 1;
-  *display: inline;
+  
   width: 100px;
   height: 100px;
 }
@@ -1858,4 +1858,19 @@ form label {
 	justify-content: center;
 	font-size: 30px;
 	animation: pulse 1s ease infinite;
+}
+
+@media screen and (max-width: 480px) {
+  #countdown span {
+    width: 70px;
+    height: 70px;
+    font-size: 20px;
+    margin: 0 2px;
+  }
+  #countdown span .simply-amount {
+    font-size: 24px;
+  }
+  #countdown span .simply-word {
+    font-size: 10px;
+  }
 }
