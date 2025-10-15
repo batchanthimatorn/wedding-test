@@ -10,6 +10,11 @@
 * 	Template Style 
 *
 * ======================================================= */
+img {
+  max-width: 100%;
+  height: auto;
+}
+
 body {
   font-family: "Work Sans", Arial, sans-serif;
   font-weight: 400;
@@ -105,6 +110,13 @@ h1, h2, h3, h4, h5, h6, figure {
   line-height: 40px;
   font-family: "Sacramento", Arial, serif;
 }
+@media screen and (max-width: 768px) {
+  .fh5co-nav #fh5co-logo {
+    font-size: 28px; /* Smaller font size for logo on mobile */
+    line-height: 28px;
+    padding-top: 5px; /* Adjust padding to align better */
+  }
+}
 .fh5co-nav a {
   padding: 5px 10px;
   color: #fff;
@@ -112,6 +124,11 @@ h1, h2, h3, h4, h5, h6, figure {
 @media screen and (max-width: 768px) {
   .fh5co-nav .menu-1, .fh5co-nav .menu-2 {
     display: none;
+  }
+}
+@media screen and (min-width: 769px) { /* Show menu on screens larger than 768px */
+  .fh5co-nav .menu-1, .fh5co-nav .menu-2 {
+    display: block !important;
   }
 }
 .fh5co-nav ul {
@@ -857,7 +874,8 @@ form label {
   #fh5co-header .display-tc h1,
   #fh5co-counter .display-tc h1,
   .fh5co-cover .display-tc h1 {
-    font-size: 30px;
+    font-size: 30px; /* Adjusted font size for better readability */
+    margin-bottom: 10px; /* Adjusted margin */
   }
 }
 #fh5co-header .display-tc h2,
@@ -871,7 +889,8 @@ form label {
   #fh5co-header .display-tc h2,
   #fh5co-counter .display-tc h2,
   .fh5co-cover .display-tc h2 {
-    font-size: 16px;
+    font-size: 18px; /* Adjusted font size for better readability */
+    margin-bottom: 15px; /* Adjusted margin */
   }
 }
 #fh5co-header .display-tc .btn,
@@ -1641,6 +1660,13 @@ form label {
 @media screen and (max-width: 768px) {
   .fh5co-nav-toggle {
     display: block;
+    top: 20px; /* Adjust top position for better alignment */
+    right: 15px; /* Adjust right position for better alignment */
+  }
+}
+@media screen and (min-width: 769px) { /* Hide toggle on screens larger than 768px */
+  .fh5co-nav-toggle {
+    display: none !important;
   }
 }
 
@@ -1860,17 +1886,35 @@ form label {
 	animation: pulse 1s ease infinite;
 }
 
+
+
 @media screen and (max-width: 480px) {
+  #countdown {
+    display: flex; /* Keep flex for centering */
+    /* Remove flex-wrap: wrap; to try and keep them in a single line */
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 2em;
+  }
   #countdown span {
-    width: 70px;
-    height: 70px;
-    font-size: 20px;
-    margin: 0 2px;
+    display: inline-flex; /* Use inline-flex to keep them horizontal */
+    flex-direction: column; /* Keep column for vertical text alignment */
+    align-items: center;
+    justify-content: center;
+    width: 20vw; /* Adjust width to fit horizontally */
+    height: 20vw; /* Maintain aspect ratio */
+    max-width: 70px; /* Cap at a smaller size for very small screens */
+    max-height: 70px;
+    margin: 0 2px; /* Reduce margin to fit more circles */
+    font-size: 4vw; /* Adjust font size */
+    max-font-size: 20px;
   }
   #countdown span .simply-amount {
-    font-size: 24px;
+    font-size: 5vw; /* Adjust font size */
+    max-font-size: 24px;
   }
   #countdown span .simply-word {
-    font-size: 10px;
+    font-size: 2vw; /* Adjust font size */
+    max-font-size: 10px;
   }
 }
