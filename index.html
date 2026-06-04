@@ -577,16 +577,17 @@
     /* ── COUNTDOWN ── */
     .cd-bg { background: var(--white); }
     .cd-grid {
-      display: flex; justify-content: center; flex-wrap: wrap;
-      gap: 12px; margin-top: 40px; align-items: center;
+      display: flex; justify-content: center; flex-wrap: nowrap;
+      gap: clamp(6px,2vw,14px); margin-top: 40px; align-items: center;
+      width: 100%;
     }
-    .cd-item { text-align: center; }
+    .cd-item { text-align: center; flex-shrink: 0; }
     .cd-box {
-      background: var(--red); border-radius: 14px;
-      padding: 16px 20px 12px;
+      background: var(--red); border-radius: 12px;
+      padding: clamp(10px,2.5vw,16px) clamp(10px,3vw,20px) clamp(8px,2vw,12px);
       box-shadow: 0 8px 24px rgba(139,0,0,0.22);
       position: relative; overflow: hidden;
-      min-width: 72px;
+      min-width: clamp(58px,14vw,80px);
     }
     .cd-box::before {
       content: ''; position: absolute; inset: 0;
@@ -595,17 +596,17 @@
     }
     .cd-num {
       font-family: 'Playfair Display', serif;
-      font-size: clamp(2rem,5vw,3.2rem); font-weight: 700;
+      font-size: clamp(1.6rem,6vw,3.2rem); font-weight: 700;
       color: white; line-height: 1; display: block; position: relative;
     }
     .cd-lbl {
-      font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
-      color: rgba(255,255,255,0.55); margin-top: 6px; font-weight: 700;
+      font-size: clamp(7px,1.8vw,9px); letter-spacing: 2px; text-transform: uppercase;
+      color: rgba(255,255,255,0.55); margin-top: 5px; font-weight: 700;
     }
     .cd-sep {
-      font-size: 2rem; color: var(--red); opacity: 0.35;
+      font-size: clamp(1.2rem,4vw,2rem); color: var(--red); opacity: 0.35;
       line-height: 1; font-family: 'Playfair Display', serif;
-      margin-bottom: 18px; /* align with number center */
+      margin-bottom: 18px; flex-shrink: 0;
     }
 
     /* ── VENUE ── */
