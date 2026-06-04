@@ -136,8 +136,21 @@
       border-radius: 22px;
       padding: 16px 18px 16px;
       box-shadow: 0 20px 60px rgba(0,0,0,0.7), 0 0 0 1px rgba(204,41,41,0.12);
+      display: none;
     }
-    #mp-fab { display: none !important; }
+    #music-player.visible { display: block; }
+    #mp-fab {
+      position: fixed; bottom: 24px; right: 24px; z-index: 1001;
+      width: 60px; height: 60px; border-radius: 50%;
+      background: var(--red);
+      border: 2px solid rgba(255,255,255,0.2);
+      color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 8px 28px rgba(0,0,0,0.45);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+    #mp-fab:hover { transform: scale(1.08); box-shadow: 0 12px 36px rgba(0,0,0,0.55); }
+    #mp-fab.hide { display: none !important; }
 
     /* มือถือ — bottom bar เต็มความกว้าง */
     @media (max-width: 480px) {
@@ -800,18 +813,6 @@
 
 <!-- ══ MUSIC PLAYER BAR ══ -->
 <div id="music-player" role="region" aria-label="เครื่องเล่นเพลง">
-  <!-- Mini bar (shown when minimized) -->
-  <div id="mp-mini" onclick="toggleMinimize()" style="display:none; cursor:pointer;">
-    <div class="mp-thumb" style="width:36px;height:36px;flex-shrink:0;">
-      <div class="mp-thumb-vinyl" id="vinyl-mini" style="width:28px;height:28px;"><div class="mp-thumb-dot" style="width:8px;height:8px;"></div></div>
-    </div>
-    <div style="flex:1;min-width:0;">
-      <div id="mini-title" style="font-size:11px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
-    </div>
-    <button id="mini-playbtn" onclick="event.stopPropagation();togglePlay()" style="background:white;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#1a0303;cursor:pointer;flex-shrink:0;">
-      <svg id="mini-playico" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-    </button>
-  </div>
   <!-- Minimize button -->
   <button id="mp-min-btn" onclick="toggleMinimize()" aria-label="ย่อ/ขยาย" style="position:absolute;top:10px;left:12px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.35);padding:4px;display:flex;align-items:center;justify-content:center;">
     <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
@@ -1139,7 +1140,6 @@ window.onYouTubeIframeAPIReady=()=>{
           ?'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
           :'<path d="M8 5v14l11-7z"/>';
         document.getElementById('playico').innerHTML=icoHtml;
-        document.getElementById('mini-playico').innerHTML=icoHtml;
         document.getElementById('vinyl').classList.toggle('spin',isPlaying);
         document.getElementById('p-artist').textContent=isPlaying?SONGS[cur].artist:'หยุดชั่วคราว';
         if(isPlaying) startProg(); else stopProg();
@@ -1203,22 +1203,22 @@ function setVol(v){ if(ytOK) ytP.setVolume(v*100); }
 
 /* ── PLAYER OPEN / PLAYLIST ── */
 function openPlayer(){
+  minimized=false;
   document.getElementById('music-player').classList.add('visible');
   document.getElementById('mp-fab').classList.add('hide');
-  /* auto-pick first song */
-  if(!playing && ytOK){ pickSong(0); }
 }
 let minimized=false;
 function toggleMinimize(){
   minimized=!minimized;
-  document.getElementById('music-player').classList.toggle('mini',minimized);
-  document.getElementById('mp-full-wrap').style.display=minimized?'none':'block';
-  const mini=document.getElementById('mp-mini');
-  mini.style.display=minimized?'flex':'none';
   if(minimized){
-    document.getElementById('mini-title').textContent=document.getElementById('p-title').textContent;
-    document.getElementById('mini-playico').innerHTML=document.getElementById('playico').innerHTML;
+    /* ย่อ → ซ่อน player แสดง FAB */
+    document.getElementById('music-player').classList.remove('visible');
+    document.getElementById('mp-fab').classList.remove('hide');
     if(plOpen) togglePlaylist();
+  } else {
+    /* ขยาย → แสดง player ซ่อน FAB */
+    document.getElementById('music-player').classList.add('visible');
+    document.getElementById('mp-fab').classList.add('hide');
   }
 }
 
@@ -1234,6 +1234,8 @@ function openEnv(){
   e.classList.add('out');
   setTimeout(()=>{e.style.display='none';},900);
   /* autoplay เพลงทันทีที่ user กด open — นับเป็น gesture */
+  document.getElementById('music-player').classList.add('visible');
+  document.getElementById('mp-fab').classList.add('hide');
   if(ytOK) ytP.playVideo();
 }
 
