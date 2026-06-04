@@ -1,0 +1,1221 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>POP & NUT · Pre-Wedding</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com"/>
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Nunito:wght@300;400;600;700&family=Dancing+Script:wght@600;700&display=swap" rel="stylesheet"/>
+  <style>
+    :root {
+      --red:       #8B0000;
+      --red-mid:   #A80000;
+      --red-light: #C41E1E;
+      --cherry:    #CC2929;
+      --cream:     #FFFDF8;
+      --white:     #FFFFFF;
+      --offwhite:  #FBF8F5;
+      --ink:       #1A0A0A;
+      --ink-mid:   #3D1515;
+      --ink-soft:  #7A4040;
+      --blush:     #F2C4C4;
+      --blush-soft:#FBE8E8;
+      --r20: 20px;
+      --r-pill: 999px;
+    }
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    button:active, [role="button"]:active, .p-song:active, .g-item:active, .w-react:active, .mp-ctrl:active {
+      filter: brightness(0.75) sepia(1) hue-rotate(175deg) saturate(3) !important;
+      transition: filter 0.05s;
+    }
+    html { scroll-behavior: smooth; }
+    body {
+      font-family: 'Nunito', sans-serif;
+      background: var(--cream);
+      color: var(--ink);
+      overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* ── CANVAS ── */
+    #confetti-canvas {
+      position: fixed; inset: 0;
+      pointer-events: none; z-index: 0;
+    }
+
+    /* ══════════ ENVELOPE SCREEN ══════════ */
+    #env-screen {
+      position: fixed; inset: 0; z-index: 900;
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      background: var(--red);
+      transition: opacity 0.9s ease, transform 0.9s ease;
+    }
+    #env-screen.out { opacity: 0; transform: scale(1.05); pointer-events: none; }
+
+    .env-top {
+      font-family: 'Nunito', sans-serif;
+      font-size: 11px; letter-spacing: 6px; text-transform: uppercase;
+      color: rgba(255,255,255,0.55); margin-bottom: 36px;
+      animation: fadeUp 1s 0.3s both;
+    }
+    .env-cake { animation: fadeUp 1s 0.6s both; }
+    .env-cake svg { width: clamp(200px,40vw,340px); height: auto; }
+
+    .env-names {
+      font-family: 'Dancing Script', cursive;
+      font-size: clamp(2rem,6vw,3.5rem); font-weight: 700;
+      color: white; margin-top: 28px; text-align: center;
+      animation: fadeUp 1s 1s both;
+    }
+    .env-amp { color: var(--blush); }
+
+    .env-open-btn {
+      margin-top: 36px;
+      padding: 14px 40px; border-radius: var(--r-pill);
+      background: white; color: var(--red);
+      font-family: 'Nunito', sans-serif;
+      font-size: 13px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700;
+      border: none; cursor: pointer;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.2);
+      transition: transform 0.2s, box-shadow 0.2s;
+      animation: fadeUp 1s 1.3s both;
+    }
+    .env-open-btn:hover { transform: translateY(-3px); box-shadow: 0 14px 40px rgba(0,0,0,0.25); }
+
+    .env-hint {
+      margin-top: 16px; font-size: 12px; letter-spacing: 2px;
+      color: rgba(255,255,255,0.4);
+      animation: fadeUp 1s 1.6s both, blink 2s 2s infinite;
+    }
+    @keyframes blink { 0%,100%{opacity:0.4} 50%{opacity:0.8} }
+    @keyframes fadeUp {
+      from { opacity:0; transform: translateY(20px); }
+      to   { opacity:1; transform: translateY(0); }
+    }
+
+    /* ══════════ MUSIC PLAYER — compact corner card ══════════ */
+
+    /* FAB — shown before player opens */
+    #mp-fab {
+      position: fixed; bottom: 24px; right: 24px; z-index: 1001;
+      width: 48px; height: 48px; border-radius: 50%;
+      background: var(--red); border: 2px solid rgba(255,255,255,0.25);
+      color: white; cursor: pointer; box-shadow: 0 6px 20px rgba(139,0,0,0.5);
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+    #mp-fab:hover { transform: scale(1.1); }
+    #mp-fab.hide { display: none; }
+
+    /* Main player card */
+    #music-player {
+      position: fixed; bottom: 20px; right: 20px; z-index: 1000;
+      width: 280px;
+      background: #1c0404;
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 18px;
+      padding: 14px 16px 12px;
+      box-shadow: 0 12px 48px rgba(0,0,0,0.55), 0 0 0 1px rgba(204,41,41,0.15);
+      display: none;
+    }
+    #music-player.visible { display: block; }
+
+    /* vinyl + song info row */
+    .mp-nowplaying {
+      display: flex; align-items: center; gap: 10px; margin-bottom: 10px;
+    }
+    .mp-thumb {
+      width: 40px; height: 40px; border-radius: 8px; flex-shrink: 0;
+      background: linear-gradient(135deg, var(--red), #2a0000);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mp-thumb-vinyl {
+      width: 34px; height: 34px; border-radius: 50%;
+      background: conic-gradient(#CC2929 0%,#5a0000 25%,#ff6b6b 50%,#5a0000 75%,#CC2929 100%);
+      display: flex; align-items: center; justify-content: center;
+    }
+    .mp-thumb-vinyl.spin { animation: spin 3s linear infinite; }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    .mp-thumb-dot { width: 9px; height: 9px; border-radius: 50%; background: #1c0404; }
+
+    .mp-info { flex: 1; min-width: 0; }
+    .mp-song-title {
+      font-size: 12px; font-weight: 700; color: white;
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis; line-height: 1.3;
+    }
+    .mp-song-artist {
+      font-size: 10px; color: rgba(255,255,255,0.45);
+      margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* progress bar */
+    .mp-progress-wrap {
+      display: flex; align-items: center; gap: 7px; margin-bottom: 10px;
+    }
+    .mp-time {
+      font-size: 9px; color: rgba(255,255,255,0.35);
+      font-variant-numeric: tabular-nums; min-width: 26px; flex-shrink: 0;
+    }
+    .mp-time.right { text-align: right; }
+    .mp-bar-track {
+      flex: 1; height: 3px; border-radius: 2px;
+      background: rgba(255,255,255,0.12); position: relative; cursor: pointer;
+    }
+    .mp-bar-fill {
+      height: 100%; border-radius: 2px; background: white; width: 0%;
+      transition: width 0.5s linear; pointer-events: none;
+    }
+    .mp-bar-thumb {
+      width: 10px; height: 10px; border-radius: 50%; background: white;
+      position: absolute; top: 50%; transform: translate(-50%,-50%);
+      left: 0%; transition: left 0.5s linear;
+      box-shadow: 0 0 4px rgba(0,0,0,0.4);
+    }
+
+    /* controls row */
+    .mp-controls {
+      display: flex; align-items: center; justify-content: center; gap: 12px;
+    }
+    .mp-ctrl {
+      background: none; border: none; cursor: pointer; color: rgba(255,255,255,0.55);
+      display: flex; align-items: center; justify-content: center;
+      transition: color 0.15s, transform 0.15s; padding: 4px; border-radius: 50%;
+    }
+    .mp-ctrl:hover { color: white; transform: scale(1.15); }
+    .mp-ctrl.play-main {
+      width: 38px; height: 38px; border-radius: 50%;
+      background: white; color: #1c0404;
+      box-shadow: 0 3px 12px rgba(0,0,0,0.35);
+    }
+    .mp-ctrl.play-main:hover { transform: scale(1.08); }
+
+    /* volume */
+    .mp-vol-row { display: flex; align-items: center; gap: 8px; margin-top: 10px; }
+    .mp-vol-icon { color: rgba(255,255,255,0.3); flex-shrink: 0; }
+    .mp-vol-slider { flex: 1; accent-color: white; cursor: pointer; height: 3px; }
+
+    /* playlist popup — above player */
+    #mp-playlist {
+      position: fixed; bottom: 210px; right: 20px; z-index: 999;
+      width: 280px;
+      background: #1c0404;
+      border-radius: 14px;
+      padding: 10px 12px 12px;
+      transform: translateY(10px);
+      opacity: 0; pointer-events: none;
+      transition: transform 0.25s cubic-bezier(0.32,0.72,0,1), opacity 0.2s ease;
+      box-shadow: 0 8px 32px rgba(0,0,0,0.55), 0 0 0 1px rgba(204,41,41,0.15);
+      max-height: 240px; overflow-y: auto;
+      border: 1px solid rgba(255,255,255,0.08);
+    }
+    #mp-playlist.open { transform: translateY(0); opacity: 1; pointer-events: auto; }
+    .pl-handle { display: none; }
+    .pl-title {
+      font-size: 10px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.35); margin-bottom: 8px; padding: 0 2px;
+    }
+    .p-songs { list-style: none; display: flex; flex-direction: column; gap: 2px; }
+    .p-song {
+      display: flex; align-items: center; gap: 10px;
+      padding: 7px 10px; border-radius: 8px; cursor: pointer;
+      border: 1px solid transparent; transition: all 0.2s;
+    }
+    .p-song:hover { background: rgba(255,255,255,0.07); }
+    .p-song.on { background: rgba(255,255,255,0.12); border-color: rgba(255,255,255,0.15); }
+    .p-song-num { font-size: 11px; color: rgba(255,255,255,0.3); width: 16px; text-align: center; flex-shrink: 0; }
+    .p-song.on .p-song-num { color: white; }
+    .p-song-eq { width: 16px; display: none; flex-shrink: 0; }
+    .p-song.on .p-song-num { display: none; }
+    .p-song.on .p-song-eq { display: flex; align-items: flex-end; gap: 2px; height: 14px; }
+    .eq-bar {
+      width: 3px; background: white; border-radius: 1px;
+      animation: eqPulse 0.8s ease-in-out infinite alternate;
+    }
+    .eq-bar:nth-child(1) { height: 60%; animation-delay: 0s; }
+    .eq-bar:nth-child(2) { height: 100%; animation-delay: 0.2s; }
+    .eq-bar:nth-child(3) { height: 40%; animation-delay: 0.1s; }
+    @keyframes eqPulse { from { transform: scaleY(0.4); } to { transform: scaleY(1); } }
+    .p-song-info { flex: 1; min-width: 0; }
+    .p-song-name { font-size: 12px; font-weight: 600; color: rgba(255,255,255,0.8); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .p-song.on .p-song-name { color: white; }
+    .p-song-artist { font-size: 10px; color: rgba(255,255,255,0.4); margin-top: 1px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+    .p-vol { flex: 1; accent-color: white; cursor: pointer; }
+
+    /* ══════════ MAIN ══════════ */
+    #main { position: relative; z-index: 1; }
+
+    /* ── HERO ── */
+    .hero {
+      min-height: 100svh;
+      background: var(--red);
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      text-align: center; padding: 80px 24px 100px;
+      position: relative; overflow: hidden;
+    }
+    /* polka dot pattern */
+    .hero::before {
+      content: '';
+      position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1.5px, transparent 1.5px);
+      background-size: 28px 28px;
+    }
+    .hero-sparkle {
+      position: absolute; color: rgba(255,255,255,0.15);
+      font-size: 20px; pointer-events: none; animation: twinkle 3s infinite;
+    }
+    @keyframes twinkle { 0%,100%{opacity:0.1;transform:scale(0.8)} 50%{opacity:0.5;transform:scale(1.1)} }
+    .hero-sparkle:nth-child(1) { top:15%; left:12%; animation-delay:0s; }
+    .hero-sparkle:nth-child(2) { top:25%; right:10%; animation-delay:0.8s; }
+    .hero-sparkle:nth-child(3) { top:70%; left:8%; animation-delay:1.6s; }
+    .hero-sparkle:nth-child(4) { top:60%; right:12%; animation-delay:0.4s; }
+    .hero-sparkle:nth-child(5) { top:45%; left:5%; animation-delay:1.2s; font-size:14px; }
+
+    .hero-eyebrow {
+      font-size: 11px; letter-spacing: 6px; text-transform: uppercase;
+      color: rgba(255,255,255,0.55); margin-bottom: 24px; position: relative;
+    }
+    .hero-names {
+      font-family: 'Dancing Script', cursive; font-weight: 700;
+      font-size: clamp(4rem,12vw,9rem); color: white; line-height: 1;
+      position: relative;
+    }
+    .hero-amp { color: var(--blush); }
+    .hero-ribbon {
+      display: flex; align-items: center; gap: 16px;
+      margin: 20px auto; width: min(320px,80%); position: relative;
+    }
+    .hr-line { flex: 1; height: 1px; background: rgba(255,255,255,0.25); }
+    .hr-bow { color: white; font-size: 18px; opacity: 0.7; }
+    .hero-date {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(1rem,2.5vw,1.3rem); color: rgba(255,255,255,0.8); position: relative;
+    }
+    .hero-sub {
+      margin-top: 8px; font-size: 11px; letter-spacing: 4px; text-transform: uppercase;
+      color: rgba(255,255,255,0.45); position: relative;
+    }
+    .hero-cherries {
+      margin-top: 32px; position: relative;
+      display: flex; align-items: center; gap: 8px; justify-content: center;
+    }
+    .cherry-icon { font-size: 28px; animation: cherryBob 2s ease-in-out infinite; }
+    .cherry-icon:nth-child(2) { animation-delay: 0.4s; font-size: 22px; }
+    .cherry-icon:nth-child(3) { animation-delay: 0.8s; }
+    @keyframes cherryBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-8px)} }
+
+    .hero-scroll {
+      position: absolute; bottom: 32px; left: 50%;
+      transform: translateX(-50%);
+      display: flex; flex-direction: column; align-items: center; gap: 6px;
+    }
+    .hs-line { width: 1px; height: 44px; background: linear-gradient(to bottom, rgba(255,255,255,0.4), transparent); animation: scrollPulse 2s infinite; }
+    @keyframes scrollPulse { 0%,100%{opacity:0.4;transform:scaleY(1)} 50%{opacity:0.8;transform:scaleY(1.1)} }
+    .hs-txt { font-size: 9px; letter-spacing: 3px; text-transform: uppercase; color: rgba(255,255,255,0.35); }
+
+    /* ── SECTION COMMONS ── */
+    .wrap { max-width: 1100px; margin: 0 auto; padding: 96px 28px; }
+    .tc { text-align: center; }
+
+    .pill-tag {
+      display: inline-flex; align-items: center; gap: 7px;
+      font-size: 10px; letter-spacing: 4px; text-transform: uppercase; font-weight: 700;
+      color: var(--red); background: var(--blush-soft);
+      padding: 6px 18px; border-radius: var(--r-pill); margin-bottom: 16px;
+    }
+    .pt-dot { width: 5px; height: 5px; border-radius: 50%; background: var(--cherry); }
+
+    h2.stitle {
+      font-family: 'Dancing Script', cursive; font-size: clamp(2.4rem,5vw,4rem);
+      font-weight: 700; color: var(--ink); line-height: 1.1; margin-bottom: 10px;
+    }
+    p.sdesc {
+      font-family: 'Nunito', sans-serif; font-size: 16px;
+      color: var(--ink-soft); line-height: 1.85; font-weight: 300;
+      max-width: 560px;
+    }
+    .bow-divider {
+      display: flex; align-items: center; gap: 14px;
+      margin: 16px auto;
+    }
+    .bd-line { flex: 1; height: 1px; background: var(--blush); }
+    .bd-bow { color: var(--cherry); font-size: 16px; }
+
+    /* ── STORY ── */
+    .story-bg { background: var(--white); }
+    .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-top: 52px; }
+    @media(max-width:768px){ .story-grid{ grid-template-columns:1fr; gap:40px; } }
+
+    .story-frame {
+      position: relative; border-radius: var(--r20); overflow: hidden;
+      box-shadow: 0 16px 60px rgba(139,0,0,0.12);
+      border: 3px solid var(--blush-soft);
+    }
+    .story-frame::after {
+      content: ''; position: absolute; inset: 12px; border-radius: 12px;
+      border: 1.5px solid rgba(204,41,41,0.2); pointer-events: none;
+    }
+    .story-frame img, .s-ph {
+      width: 100%; height: 440px; object-fit: cover; display: block;
+    }
+    .s-ph {
+      background: linear-gradient(135deg, #FFE5E5, #FFF8F8, #FFE0E0);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+    }
+    .s-ph span { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); }
+
+    .story-body .stitle { text-align: left; }
+    .story-body .sdesc { margin-top: 14px; }
+    .story-body .bow-divider { justify-content: flex-start; }
+    blockquote {
+      font-family: 'Playfair Display', serif; font-style: italic;
+      font-size: clamp(1.1rem,1.8vw,1.35rem); color: var(--red);
+      border-left: 3px solid var(--blush); padding-left: 18px;
+      margin: 20px 0; line-height: 1.75;
+    }
+
+    /* ── GALLERY ── */
+    .gallery-bg { background: var(--offwhite); }
+    .g-masonry { column-count: 3; column-gap: 14px; margin-top: 52px; }
+    @media(max-width:768px){ .g-masonry{ column-count:2; } }
+    @media(max-width:480px){ .g-masonry{ column-count:1; } }
+
+    .g-item {
+      break-inside: avoid; margin-bottom: 14px;
+      border-radius: var(--r20); overflow: hidden; position: relative;
+      cursor: pointer; box-shadow: 0 4px 20px rgba(139,0,0,0.08);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+      border: 2px solid transparent;
+    }
+    .g-item:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 16px 48px rgba(139,0,0,0.18); border-color: var(--blush); }
+    .g-item img, .g-ph { width: 100%; display: block; object-fit: cover; }
+    .g-item:nth-child(1) .g-ph { height: 250px; }
+    .g-item:nth-child(2) .g-ph { height: 340px; }
+    .g-item:nth-child(3) .g-ph { height: 220px; }
+    .g-item:nth-child(4) .g-ph { height: 310px; }
+    .g-item:nth-child(5) .g-ph { height: 240px; }
+    .g-item:nth-child(6) .g-ph { height: 350px; }
+    .g-ph {
+      background: linear-gradient(150deg, #FFE8E8, #FFF5F5, #FFE0E0);
+      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
+    }
+    .g-ph span { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); }
+    .g-over {
+      position: absolute; inset: 0; background: rgba(139,0,0,0.55);
+      opacity: 0; transition: opacity 0.3s;
+      display: flex; align-items: center; justify-content: center;
+    }
+    .g-item:hover .g-over { opacity: 1; }
+    .g-over-lbl { font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: white; }
+
+    /* ── LIGHTBOX ── */
+    #lb {
+      position: fixed; inset: 0; z-index: 2000;
+      background: rgba(26,10,10,0.95);
+      display: none; align-items: center; justify-content: center;
+    }
+    #lb.open { display: flex; }
+    #lb-img { max-width: 90vw; max-height: 88vh; border-radius: var(--r20); object-fit: contain; }
+    .lb-b {
+      position: absolute;
+      background: rgba(255,255,255,0.08); border: 1.5px solid rgba(255,255,255,0.2);
+      border-radius: 50%; color: white; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      transition: background 0.2s;
+    }
+    .lb-b:hover { background: rgba(255,255,255,0.18); }
+    .lb-close { top:20px; right:24px; width:44px; height:44px; font-size:20px; }
+    .lb-prev  { left:16px; top:50%; transform:translateY(-50%); width:50px; height:50px; font-size:22px; }
+    .lb-next  { right:16px; top:50%; transform:translateY(-50%); width:50px; height:50px; font-size:22px; }
+
+    /* ── INVITE CARD ── */
+    .invite-bg { background: var(--red); }
+    .invite-bg .stitle { color: white; }
+    .invite-bg .pill-tag { background: rgba(255,255,255,0.15); color: white; }
+    .invite-bg .pt-dot { background: white; }
+    .invite-bg .bd-line { background: rgba(255,255,255,0.25); }
+    .invite-bg .bd-bow { color: rgba(255,255,255,0.6); }
+
+    .icard {
+      max-width: 540px; margin: 52px auto 0;
+      background: var(--cream); border-radius: var(--r20);
+      padding: clamp(36px,6vw,64px) clamp(28px,5vw,56px);
+      box-shadow: 0 24px 80px rgba(0,0,0,0.3);
+      text-align: center; position: relative; overflow: hidden;
+    }
+    .icard::before {
+      content: ''; position: absolute; top: 0; left: 0; right: 0; height: 6px;
+      background: linear-gradient(90deg, var(--red), var(--cherry), var(--red));
+    }
+    .ic-cherries { font-size: 22px; margin-bottom: 16px; }
+    .ic-with { font-size: 11px; letter-spacing: 4px; text-transform: uppercase; color: var(--ink-soft); margin-bottom: 8px; }
+    .ic-fam { font-family: 'Playfair Display', serif; font-style: italic; font-size: 15px; color: var(--ink-mid); line-height: 1.9; margin-bottom: 24px; }
+    .ic-join { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); }
+    .ic-names {
+      font-family: 'Dancing Script', cursive; font-size: clamp(2.8rem,6vw,4.2rem); font-weight: 700;
+      color: var(--red); line-height: 1; margin: 6px 0;
+    }
+    .ic-event {
+      display: inline-block; margin: 14px 0 28px;
+      padding: 7px 22px; border-radius: var(--r-pill);
+      background: var(--red); color: white;
+      font-size: 11px; letter-spacing: 4px; text-transform: uppercase; font-weight: 700;
+    }
+    .ic-rows { display: flex; flex-direction: column; gap: 18px; text-align: left; }
+    .ic-row { display: flex; align-items: flex-start; gap: 14px; }
+    .ic-ico {
+      width: 42px; height: 42px; border-radius: 12px; flex-shrink: 0;
+      background: var(--blush-soft); display: flex; align-items: center; justify-content: center;
+      color: var(--red);
+    }
+    .ic-lbl { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--cherry); font-weight: 700; }
+    .ic-val { font-family: 'Playfair Display', serif; font-size: 17px; color: var(--ink); margin-top: 3px; }
+    .ic-sub { font-size: 13px; color: var(--ink-soft); margin-top: 3px; font-style: italic; }
+    .ic-dress-swatches { display: flex; gap: 8px; margin-top: 4px; }
+    .ic-swatch {
+      width: 24px; height: 24px; border-radius: 50%;
+      display: inline-block;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+    }
+    .ic-qr-wrap {
+      margin-top: 24px; display: flex; flex-direction: column;
+      align-items: center; gap: 8px;
+    }
+    .ic-qr-label {
+      font-size: 11px; letter-spacing: 2px; text-transform: uppercase;
+      color: var(--ink-soft); font-weight: 700;
+    }
+    .ic-qr-box {
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 4px 18px rgba(0,0,0,0.1);
+      border: 3px solid var(--blush-soft);
+      background: #fff8f0;
+      line-height: 0;
+    }
+    .ic-qr-sub { font-size: 12px; color: var(--ink-soft); font-style: italic; }
+
+    /* ── COUNTDOWN ── */
+    .cd-bg { background: var(--white); }
+    .cd-grid {
+      display: flex; justify-content: center; flex-wrap: wrap;
+      gap: 12px; margin-top: 40px; align-items: center;
+    }
+    .cd-item { text-align: center; }
+    .cd-box {
+      background: var(--red); border-radius: 14px;
+      padding: 16px 20px 12px;
+      box-shadow: 0 8px 24px rgba(139,0,0,0.22);
+      position: relative; overflow: hidden;
+      min-width: 72px;
+    }
+    .cd-box::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.06) 1px, transparent 1px);
+      background-size: 12px 12px;
+    }
+    .cd-num {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(2rem,5vw,3.2rem); font-weight: 700;
+      color: white; line-height: 1; display: block; position: relative;
+    }
+    .cd-lbl {
+      font-size: 9px; letter-spacing: 3px; text-transform: uppercase;
+      color: rgba(255,255,255,0.55); margin-top: 6px; font-weight: 700;
+    }
+    .cd-sep {
+      font-size: 2rem; color: var(--red); opacity: 0.35;
+      line-height: 1; font-family: 'Playfair Display', serif;
+      margin-bottom: 18px; /* align with number center */
+    }
+
+    /* ── VENUE ── */
+    .venue-bg { background: var(--offwhite); }
+    .venue-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 52px; align-items: start; margin-top: 52px; }
+    @media(max-width:768px){ .venue-grid{ grid-template-columns:1fr; } }
+
+    .venue-map { border-radius: var(--r20); overflow: hidden; box-shadow: 0 12px 40px rgba(139,0,0,0.12); border: 3px solid var(--blush-soft); }
+    .venue-map iframe { width: 100%; height: 360px; border: none; display: block; }
+
+    .venue-items { display: flex; flex-direction: column; gap: 24px; }
+    .v-item { display: flex; gap: 16px; align-items: flex-start; }
+    .v-ico {
+      width: 48px; height: 48px; border-radius: 14px; flex-shrink: 0;
+      background: var(--blush-soft); display: flex; align-items: center; justify-content: center; color: var(--red);
+    }
+    .v-lbl { font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--cherry); font-weight: 700; }
+    .v-val { font-family: 'Playfair Display', serif; font-size: 18px; color: var(--ink); margin-top: 4px; }
+    .v-sub { font-size: 13px; color: var(--ink-soft); margin-top: 4px; font-style: italic; }
+
+    .v-cta {
+      display: inline-flex; align-items: center; gap: 10px; margin-top: 6px;
+      padding: 13px 28px; border-radius: var(--r-pill);
+      background: var(--red); color: white; text-decoration: none;
+      font-size: 12px; letter-spacing: 3px; text-transform: uppercase; font-weight: 700;
+      box-shadow: 0 8px 24px rgba(139,0,0,0.3); transition: all 0.25s;
+    }
+    .v-cta:hover { background: var(--red-light); transform: translateY(-2px); }
+
+    /* ── WISHES ── */
+    /* ── DRESS CODE ── */
+    .dress-bg { background: var(--offwhite); }
+    .dress-palette {
+      display: flex; justify-content: center; gap: 20px;
+      flex-wrap: wrap; margin-top: 44px;
+    }
+    .dress-swatch {
+      display: flex; flex-direction: column; align-items: center; gap: 14px;
+    }
+    .swatch-circle {
+      width: 88px; height: 88px; border-radius: 50%;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.12), 0 0 0 4px white, 0 0 0 6px rgba(0,0,0,0.06);
+      transition: transform 0.25s ease;
+    }
+    .swatch-circle:hover { transform: scale(1.08); }
+    .swatch-name {
+      font-size: 12px; font-weight: 700; letter-spacing: 2px;
+      text-transform: uppercase; color: var(--ink-soft);
+    }
+    .swatch-hex {
+      font-size: 11px; color: var(--ink-soft); opacity: 0.55; margin-top: -10px;
+    }
+    .dress-note {
+      margin-top: 36px; font-size: 13px; color: var(--ink-soft);
+      line-height: 1.8; max-width: 420px; margin-left: auto; margin-right: auto;
+    }
+
+    .wishes-bg { background: var(--white); }
+    .w-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(270px,1fr)); gap: 18px; margin-top: 52px; }
+
+    .w-card {
+      background: var(--cream); border-radius: var(--r20); padding: 26px;
+      border: 2px solid var(--blush-soft);
+      box-shadow: 0 4px 20px rgba(139,0,0,0.06);
+      text-align: left; transition: transform 0.25s, box-shadow 0.25s;
+      position: relative;
+    }
+    .w-card::before { content: '🍒'; position: absolute; top: 16px; right: 16px; font-size: 18px; opacity: 0.4; }
+    .w-card:hover { transform: translateY(-4px); box-shadow: 0 12px 40px rgba(139,0,0,0.12); }
+    .w-q { font-family: 'Dancing Script', cursive; font-size: 3.5rem; color: var(--blush); line-height: 0.5; display: block; margin-bottom: 14px; }
+    .w-txt { font-size: 15px; color: var(--ink-mid); line-height: 1.85; font-style: italic; font-family: 'Playfair Display', serif; }
+    .w-from { margin-top: 16px; font-size: 11px; letter-spacing: 2px; text-transform: uppercase; color: var(--red); font-weight: 700; }
+
+    .w-form { max-width: 560px; margin: 52px auto 0; }
+    .w-form-title { font-family: 'Dancing Script', cursive; font-size: 2.2rem; font-weight: 700; color: var(--red); text-align: center; margin-bottom: 24px; }
+    .f-grp { margin-bottom: 14px; }
+    .f-grp label { display: block; font-size: 10px; letter-spacing: 3px; text-transform: uppercase; color: var(--red); font-weight: 700; margin-bottom: 8px; }
+    .f-grp input, .f-grp textarea {
+      width: 100%; padding: 13px 16px; border-radius: 12px;
+      border: 2px solid var(--blush); background: var(--offwhite);
+      font-family: 'Nunito', sans-serif; font-size: 16px; color: var(--ink);
+      outline: none; transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .f-grp input:focus, .f-grp textarea:focus {
+      border-color: var(--red); box-shadow: 0 0 0 4px rgba(139,0,0,0.08);
+    }
+    .f-grp textarea { height: 110px; resize: vertical; }
+    .f-btn {
+      width: 100%; padding: 15px; border-radius: var(--r-pill); border: none;
+      background: var(--red); color: white;
+      font-family: 'Nunito', sans-serif; font-size: 14px;
+      letter-spacing: 3px; text-transform: uppercase; font-weight: 700; cursor: pointer;
+      box-shadow: 0 8px 28px rgba(139,0,0,0.3); transition: all 0.25s;
+    }
+    .f-btn:hover { background: var(--red-light); transform: translateY(-2px); }
+
+    /* ── FOOTER ── */
+    footer {
+      background: var(--red); text-align: center; padding: 72px 24px;
+      position: relative; overflow: hidden;
+    }
+    footer::before {
+      content: ''; position: absolute; inset: 0;
+      background-image: radial-gradient(circle, rgba(255,255,255,0.05) 1.5px, transparent 1.5px);
+      background-size: 24px 24px;
+    }
+    .f-names { font-family: 'Dancing Script', cursive; font-size: clamp(2.5rem,6vw,4rem); font-weight: 700; color: white; margin-bottom: 10px; position: relative; }
+    .f-date { font-size: 11px; letter-spacing: 5px; text-transform: uppercase; color: rgba(255,255,255,0.45); margin-bottom: 28px; position: relative; }
+    .f-cherries { font-size: 32px; animation: cherryBob 2s ease-in-out infinite; position: relative; }
+    .f-copy { font-size: 11px; color: rgba(255,255,255,0.3); margin-top: 18px; letter-spacing: 1px; position: relative; }
+
+    /* ── REVEAL ── */
+    .reveal { opacity: 0; transform: translateY(24px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: none; }
+
+    ::-webkit-scrollbar { width: 4px; }
+    ::-webkit-scrollbar-track { background: var(--cream); }
+    ::-webkit-scrollbar-thumb { background: var(--blush); border-radius: 2px; }
+
+    @media(prefers-reduced-motion:reduce){
+      *,*::before,*::after{ animation-duration:0.01ms!important; transition-duration:0.01ms!important; }
+    }
+  </style>
+</head>
+<body>
+
+<canvas id="confetti-canvas" aria-hidden="true"></canvas>
+
+<!-- ══ ENVELOPE SCREEN ══ -->
+<div id="env-screen" role="dialog" aria-label="การ์ดเชิญงานแต่งงาน">
+  <p class="env-top">Welcome to the Wedding</p>
+  <div class="env-cake" aria-hidden="true">
+    <!-- Cute cake SVG -->
+    <svg viewBox="0 0 340 280" fill="none" xmlns="http://www.w3.org/2000/svg">
+      <!-- Tier 3 bottom -->
+      <ellipse cx="170" cy="248" rx="130" ry="22" fill="#FBF8F5"/>
+      <rect x="40" y="200" width="260" height="50" rx="6" fill="#FBF8F5"/>
+      <ellipse cx="170" cy="200" rx="130" ry="22" fill="#FFFDF8"/>
+      <!-- Tier 2 mid -->
+      <ellipse cx="170" cy="192" rx="100" ry="18" fill="#FBF8F5"/>
+      <rect x="70" y="152" width="200" height="42" rx="6" fill="#FBF8F5"/>
+      <ellipse cx="170" cy="152" rx="100" ry="18" fill="#FFFDF8"/>
+      <!-- Tier 1 top -->
+      <ellipse cx="170" cy="145" rx="70" ry="14" fill="#FBF8F5"/>
+      <rect x="100" y="112" width="140" height="35" rx="6" fill="#FBF8F5"/>
+      <ellipse cx="170" cy="112" rx="70" ry="14" fill="#FFFDF8"/>
+      <!-- Bows white -->
+      <text x="130" y="235" font-size="18" text-anchor="middle" fill="white" opacity="0.8">🎀</text>
+      <text x="210" y="235" font-size="18" text-anchor="middle" fill="white" opacity="0.8">🎀</text>
+      <text x="170" y="182" font-size="16" text-anchor="middle" fill="white" opacity="0.8">🎀</text>
+      <text x="128" y="182" font-size="16" text-anchor="middle" fill="white" opacity="0.8">🎀</text>
+      <text x="212" y="182" font-size="16" text-anchor="middle" fill="white" opacity="0.8">🎀</text>
+      <!-- Cherries -->
+      <text x="100" y="175" font-size="22">🍒</text>
+      <text x="230" y="175" font-size="22">🍒</text>
+      <text x="165" y="108" font-size="20">🍒</text>
+      <text x="75" y="228" font-size="24">🍒</text>
+      <text x="255" y="228" font-size="24">🍒</text>
+      <text x="170" y="250" font-size="22">🍒</text>
+    </svg>
+  </div>
+  <div class="env-names">POP <span class="env-amp">&amp;</span> NUT</div>
+  <button class="env-open-btn" onclick="openEnv()" aria-label="เปิดการ์ดเชิญ">
+    เปิดการ์ดเชิญ 🍒
+  </button>
+  <p class="env-hint">✦ kittiya &amp; theera ✦</p>
+</div>
+
+<!-- ══ MUSIC FAB ══ -->
+<button id="mp-fab" onclick="openPlayer()" aria-label="เปิดเครื่องเล่นเพลง">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M12 3v10.55A4 4 0 1014 17V7h4V3h-6z"/></svg>
+</button>
+
+<!-- ══ PLAYLIST DRAWER ══ -->
+<div id="mp-playlist" role="dialog" aria-label="รายการเพลง">
+  <div class="pl-handle"></div>
+  <p class="pl-title">เลือกเพลง</p>
+  <ul class="p-songs" id="song-list">
+    <li class="p-song" onclick="pickSong(0)" tabindex="0">
+      <span class="p-song-num">1</span>
+      <span class="p-song-eq" aria-hidden="true"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span>
+      <div class="p-song-info">
+        <div class="p-song-name">เรื่องราวความรักในตำนาน</div>
+        <div class="p-song-artist">YOUNGOHM ft. GAVIN.D</div>
+      </div>
+    </li>
+    <li class="p-song" onclick="pickSong(1)" tabindex="0">
+      <span class="p-song-num">2</span>
+      <span class="p-song-eq" aria-hidden="true"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span>
+      <div class="p-song-info">
+        <div class="p-song-name">เสือสิ้นลาย</div>
+        <div class="p-song-artist">F.HERO ft. P-Hot, YOUNGOHM, FYMME</div>
+      </div>
+    </li>
+    <li class="p-song" onclick="pickSong(2)" tabindex="0">
+      <span class="p-song-num">3</span>
+      <span class="p-song-eq" aria-hidden="true"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span>
+      <div class="p-song-info">
+        <div class="p-song-name">จอร์จ ซาร่า</div>
+        <div class="p-song-artist">Masketeer X Sleep Flowz X JKR</div>
+      </div>
+    </li>
+    <li class="p-song" onclick="pickSong(3)" tabindex="0">
+      <span class="p-song-num">4</span>
+      <span class="p-song-eq" aria-hidden="true"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span>
+      <div class="p-song-info">
+        <div class="p-song-name">มากกว่ารัก</div>
+        <div class="p-song-artist">SARAN X BlackHeart</div>
+      </div>
+    </li>
+    <li class="p-song" onclick="pickSong(4)" tabindex="0">
+      <span class="p-song-num">5</span>
+      <span class="p-song-eq" aria-hidden="true"><span class="eq-bar"></span><span class="eq-bar"></span><span class="eq-bar"></span></span>
+      <div class="p-song-info">
+        <div class="p-song-name">Victoria's Secret</div>
+        <div class="p-song-artist">DIAMOND MQT</div>
+      </div>
+    </li>
+  </ul>
+</div>
+
+<!-- ══ MUSIC PLAYER BAR ══ -->
+<div id="music-player" role="region" aria-label="เครื่องเล่นเพลง">
+  <!-- Now Playing -->
+  <div class="mp-nowplaying">
+    <div class="mp-thumb">
+      <div class="mp-thumb-vinyl" id="vinyl"><div class="mp-thumb-dot"></div></div>
+    </div>
+    <div class="mp-info">
+      <div class="mp-song-title" id="p-title">เลือกเพลง</div>
+      <div class="mp-song-artist" id="p-artist">กดที่ 🎵 เพื่อเริ่มต้น</div>
+    </div>
+    <!-- playlist toggle -->
+    <button class="mp-ctrl" onclick="togglePlaylist()" aria-label="รายการเพลง" style="color:rgba(255,255,255,0.5)">
+      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+    </button>
+  </div>
+  <!-- Progress -->
+  <div class="mp-progress-wrap">
+    <span class="mp-time" id="mp-cur">0:00</span>
+    <div class="mp-bar-track" id="mp-track" onclick="seekTo(event)">
+      <div class="mp-bar-fill" id="mp-fill"></div>
+      <div class="mp-bar-thumb" id="mp-thumb"></div>
+    </div>
+    <span class="mp-time right" id="mp-dur">0:00</span>
+  </div>
+  <!-- Controls -->
+  <div class="mp-controls">
+    <button class="mp-ctrl" onclick="prevS()" aria-label="ก่อนหน้า">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+    </button>
+    <button class="mp-ctrl play-main" id="playbtn" onclick="togglePlay()" aria-label="เล่น/หยุด">
+      <svg id="playico" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+    <button class="mp-ctrl" onclick="nextS()" aria-label="ถัดไป">
+      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+    </button>
+  </div>
+  <!-- Volume -->
+  <div class="mp-vol-row">
+    <svg class="mp-vol-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.7-4.1v8.2A4.5 4.5 0 0016.5 12z"/></svg>
+    <input type="range" class="mp-vol-slider" id="vol" min="0" max="1" step="0.05" value="0.6" aria-label="ระดับเสียง" oninput="setVol(this.value)">
+    <svg class="mp-vol-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.7-4.1v8.2A4.5 4.5 0 0016.5 12zM14 3.23v2.06a7 7 0 010 13.42v2.06A9 9 0 0014 3.23z"/></svg>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div id="main">
+
+  <!-- HERO -->
+  <section class="hero">
+    <span class="hero-sparkle" aria-hidden="true">✦</span>
+    <span class="hero-sparkle" aria-hidden="true">✶</span>
+    <span class="hero-sparkle" aria-hidden="true">✦</span>
+    <span class="hero-sparkle" aria-hidden="true">✶</span>
+    <span class="hero-sparkle" aria-hidden="true">✦</span>
+
+    <p class="hero-eyebrow reveal">Welcome to the Wedding</p>
+    <h1 class="hero-names reveal">POP <span class="hero-amp">&amp;</span> NUT</h1>
+    <div class="hero-ribbon reveal" aria-hidden="true">
+      <div class="hr-line"></div>
+      <span class="hr-bow">🎀</span>
+      <div class="hr-line"></div>
+    </div>
+    <p class="hero-date reveal">วันศุกร์ที่ 19 ธันวาคม พ.ศ. 2569</p>
+    <p class="hero-sub reveal">kittiya &amp; theera</p>
+    <div class="hero-cherries reveal" aria-hidden="true">
+      <span class="cherry-icon">🍒</span>
+      <span class="cherry-icon">🍒</span>
+      <span class="cherry-icon">🍒</span>
+    </div>
+    <div class="hero-scroll" aria-hidden="true">
+      <div class="hs-line"></div>
+      <span class="hs-txt">เลื่อนดู</span>
+    </div>
+  </section>
+
+  <!-- STORY -->
+  <section class="story-bg">
+    <div class="wrap">
+      <div class="story-grid">
+        <div class="story-frame reveal">
+          <!-- ใส่รูปจริง: <img src="photos/story.jpg" alt="POP & NUT"> -->
+          <div class="s-ph">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="#C08080" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg>
+            <span>ใส่รูปที่นี่</span>
+          </div>
+        </div>
+        <div class="story-body reveal">
+          <span class="pill-tag"><span class="pt-dot"></span>Our Story</span>
+          <h2 class="stitle">เรื่องราวของเรา</h2>
+          <div class="bow-divider" style="justify-content:flex-start">
+            <div class="bd-line" style="max-width:60px"></div><span class="bd-bow">🎀</span>
+          </div>
+          <blockquote>"ทุกช่วงเวลาที่ผ่านมา<br>ทำให้รู้ว่าเธอคือคนที่ฉันอยากร่วมทางด้วยตลอดชีวิต..."</blockquote>
+          <p class="sdesc">เราพบกันครั้งแรกในวันที่ฝนตก ณ สถานที่ที่ไม่น่าจะเป็นไปได้ แต่บางทีโชคชะตาก็มีแผนของมันเอง ตั้งแต่วันนั้น ทุกวันมีความหมายมากขึ้น และวันนี้เราจะก้าวเดินไปด้วยกัน...</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- GALLERY -->
+  <section class="gallery-bg">
+    <div class="wrap tc">
+      <span class="pill-tag reveal"><span class="pt-dot"></span>Pre-Wedding Photos</span>
+      <h2 class="stitle reveal">ภาพถ่าย Pre-Wedding</h2>
+      <div class="bow-divider reveal"><div class="bd-line"></div><span class="bd-bow">🎀</span><div class="bd-line"></div></div>
+      <p class="sdesc reveal" style="margin:0 auto">ช่วงเวลาดีๆ ที่เราบันทึกไว้ด้วยกัน 🍒</p>
+      <div class="g-masonry" id="gallery">
+        <div class="g-item reveal" onclick="openLb(0)"><div class="g-ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C08080" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo 01</span></div><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(1)"><div class="g-ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C08080" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo 02</span></div><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(2)"><div class="g-ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C08080" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo 03</span></div><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(3)"><div class="g-ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C08080" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo 04</span></div><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(4)"><div class="g-ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C08080" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo 05</span></div><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(5)"><div class="g-ph"><svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="#C08080" stroke-width="1" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="3"/><circle cx="8.5" cy="8.5" r="1.5"/><path d="M21 15l-5-5L5 21"/></svg><span>Photo 06</span></div><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INVITE CARD -->
+  <section class="invite-bg">
+    <div class="wrap tc">
+      <span class="pill-tag reveal"><span class="pt-dot"></span>Formal Invitation</span>
+      <h2 class="stitle reveal">การ์ดเชิญงานแต่งงาน</h2>
+      <div class="bow-divider reveal"><div class="bd-line"></div><span class="bd-bow">🎀</span><div class="bd-line"></div></div>
+      <div class="icard reveal">
+        <div class="ic-cherries" aria-hidden="true">🍒 🎀 🍒</div>
+        <p class="ic-with">Together with their families</p>
+        <p class="ic-fam">นาย…… และ นาง……<br><em>ขอเชิญท่านร่วมเป็นสักขีพยาน</em><br>ในวันมงคลสมรสของบุตร</p>
+        <p class="ic-join">cordially invite you to the</p>
+        <div class="ic-names">POP &amp; NUT</div>
+        <p style="font-family:'Playfair Display',serif;font-style:italic;font-size:14px;color:var(--ink-soft);margin-bottom:4px">kittiya &amp; theera</p>
+        <span class="ic-event">Pre-Wedding Celebration 🍒</span>
+        <div class="bow-divider"><div class="bd-line"></div><span class="bd-bow">🎀</span><div class="bd-line"></div></div>
+        <div class="ic-rows">
+          <div class="ic-row">
+            <div class="ic-ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+            <div><div class="ic-lbl">วัน — เวลา</div><div class="ic-val">วันศุกร์ที่ 19 ธันวาคม 2569</div><div class="ic-sub">เริ่มเวลา 17:00 น. เป็นต้นไป</div></div>
+          </div>
+          <div class="ic-row">
+            <div class="ic-ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div><div class="ic-lbl">สถานที่</div><div class="ic-val">บ้าน ๒๔๖๒</div><div class="ic-sub">จังหวัดจันทบุรี</div></div>
+          </div>
+          <div class="ic-row">
+            <div class="ic-ico" aria-hidden="true"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg></div>
+            <div>
+              <div class="ic-lbl">Dress Code</div>
+              <div class="ic-val" style="margin-bottom:8px">ชมพู · น้ำตาล · ครีม</div>
+              <div class="ic-dress-swatches">
+                <span class="ic-swatch" style="background:#F4A7B9;" title="ชมพู"></span>
+                <span class="ic-swatch" style="background:#A67C5B;" title="น้ำตาล"></span>
+                <span class="ic-swatch" style="background:#F5ECD7;border:1px solid rgba(0,0,0,0.08);" title="ครีม"></span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- QR สถานที่ -->
+        <div class="ic-qr-wrap">
+          <div class="ic-qr-label">📍 สแกนเพื่อดูเส้นทาง</div>
+          <div class="ic-qr-box">
+            <img src="https://api.qrserver.com/v1/create-qr-code/?size=120x120&data=https%3A%2F%2Fmaps.app.goo.gl%2FxPrK6toAuczrU2Lq6&bgcolor=fff8f0&color=5a1010&margin=6" alt="QR สถานที่บ้าน ๒๔๖๒" width="120" height="120" loading="lazy"/>
+          </div>
+          <div class="ic-qr-sub">บ้าน ๒๔๖๒ · จันทบุรี</div>
+        </div>
+
+        <div style="margin-top:20px;font-size:22px" aria-hidden="true">🍒 🎀 🍒</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COUNTDOWN -->
+  <section class="cd-bg">
+    <div class="wrap tc">
+      <span class="pill-tag reveal"><span class="pt-dot"></span>Counting Down</span>
+      <h2 class="stitle reveal">นับถอยหลังสู่วันสำคัญ</h2>
+      <div class="bow-divider reveal"><div class="bd-line"></div><span class="bd-bow">🎀</span><div class="bd-line"></div></div>
+      <div class="cd-grid reveal" id="countdown" aria-live="polite" aria-label="นับถอยหลัง">
+        <div class="cd-item">
+          <div class="cd-box"><span class="cd-num" id="cd-d">--</span></div>
+          <span class="cd-lbl">Days</span>
+        </div>
+        <span class="cd-sep" aria-hidden="true">:</span>
+        <div class="cd-item">
+          <div class="cd-box"><span class="cd-num" id="cd-h">--</span></div>
+          <span class="cd-lbl">Hours</span>
+        </div>
+        <span class="cd-sep" aria-hidden="true">:</span>
+        <div class="cd-item">
+          <div class="cd-box"><span class="cd-num" id="cd-m">--</span></div>
+          <span class="cd-lbl">Mins</span>
+        </div>
+        <span class="cd-sep" aria-hidden="true">:</span>
+        <div class="cd-item">
+          <div class="cd-box"><span class="cd-num" id="cd-s">--</span></div>
+          <span class="cd-lbl">Secs</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- VENUE -->
+  <section class="venue-bg">
+    <div class="wrap">
+      <div class="tc">
+        <span class="pill-tag reveal"><span class="pt-dot"></span>Find Us</span>
+        <h2 class="stitle reveal">สถานที่จัดงาน</h2>
+        <div class="bow-divider reveal"><div class="bd-line"></div><span class="bd-bow">🎀</span><div class="bd-line"></div></div>
+      </div>
+      <div class="venue-grid">
+        <div class="venue-map reveal">
+          <iframe src="https://maps.google.com/maps?q=บ้าน+2462+Chanthaburi&output=embed&z=15"
+            title="แผนที่สถานที่จัดงาน" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen></iframe>
+        </div>
+        <div class="venue-items reveal">
+          <div class="v-item">
+            <div class="v-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg></div>
+            <div><div class="v-lbl">สถานที่</div><div class="v-val">บ้าน ๒๔๖๒</div><div class="v-sub">จังหวัดจันทบุรี</div></div>
+          </div>
+          <div class="v-item">
+            <div class="v-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg></div>
+            <div><div class="v-lbl">วัน — เวลา</div><div class="v-val">ศุกร์ 19 ธันวาคม 2569</div><div class="v-sub">17:00 — 22:00 น.</div></div>
+          </div>
+          <div class="v-item">
+            <div class="v-ico" aria-hidden="true"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="1" y="3" width="15" height="13"/><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg></div>
+            <div><div class="v-lbl">การเดินทาง</div><div class="v-val">บ้าน ๒๔๖๒ | Chanthaburi</div><div class="v-sub">คลิกปุ่มด้านล่างเพื่อนำทาง</div></div>
+          </div>
+          <a href="https://maps.app.goo.gl/xPrK6toAuczrU2Lq6" target="_blank" rel="noopener noreferrer" class="v-cta">
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13S3 17 3 10a9 9 0 0118 0z"/><circle cx="12" cy="10" r="3"/></svg>
+            นำทางไปสถานที่
+          </a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DRESS CODE -->
+  <section class="dress-bg">
+    <div class="wrap tc">
+      <span class="pill-tag reveal"><span class="pt-dot"></span>Dress Code</span>
+      <h2 class="stitle reveal">ธีมสีงาน 🎀</h2>
+      <p class="sdesc reveal">แต่งตัวให้สวยงามในโทนสีเหล่านี้นะคะ</p>
+      <div class="dress-palette reveal">
+        <div class="dress-swatch">
+          <div class="swatch-circle" style="background:#F4A7B9;"></div>
+          <div class="swatch-name">ชมพู</div>
+          <div class="swatch-hex">Pink</div>
+        </div>
+        <div class="dress-swatch">
+          <div class="swatch-circle" style="background:#A67C5B;"></div>
+          <div class="swatch-name">น้ำตาล</div>
+          <div class="swatch-hex">Brown</div>
+        </div>
+        <div class="dress-swatch">
+          <div class="swatch-circle" style="background:#F5ECD7;"></div>
+          <div class="swatch-name">ครีม</div>
+          <div class="swatch-hex">Cream</div>
+        </div>
+      </div>
+      <p class="dress-note reveal">กรุณาหลีกเลี่ยงการสวมชุดสีขาวและสีแดงในวันงาน<br>เพื่อความสวยงามของบรรยากาศงาน ขอบคุณค่ะ 🍒</p>
+    </div>
+  </section>
+
+  <!-- WISHES -->
+  <section class="wishes-bg">
+    <div class="wrap tc">
+      <span class="pill-tag reveal"><span class="pt-dot"></span>Blessings</span>
+      <h2 class="stitle reveal">ฝากคำอวยพร 🍒</h2>
+      <div class="bow-divider reveal"><div class="bd-line"></div><span class="bd-bow">🎀</span><div class="bd-line"></div></div>
+      <p class="sdesc reveal" style="margin:0 auto">ร่วมส่งความปรารถนาดีให้กับ POP &amp; NUT</p>
+      <div class="w-grid" id="w-grid">
+        <div class="w-card reveal"><span class="w-q">"</span><p class="w-txt">ขอให้ทั้งสองรักกันยืนนาน มีความสุขในทุกวัน สมหวังในทุกสิ่ง และก้าวเดินไปด้วยกันอย่างมีความสุขตลอดไปนะคะ</p><p class="w-from">— ครอบครัว</p></div>
+        <div class="w-card reveal"><span class="w-q">"</span><p class="w-txt">Happy Wedding! ขอให้รักกันตลอดไป มีสุขภาพแข็งแรง และครอบครัวที่อบอุ่นนะครับ ยินดีด้วยจากใจครับ</p><p class="w-from">— เพื่อนสนิท</p></div>
+        <div class="w-card reveal"><span class="w-q">"</span><p class="w-txt">ขอพรให้ทั้งคู่มีชีวิตคู่ที่แสนสุข เติมเต็มซึ่งกันและกัน และสร้างความทรงจำดีๆ ร่วมกันตลอดชีวิต</p><p class="w-from">— พี่น้อง</p></div>
+      </div>
+      <div class="w-form reveal">
+        <p class="w-form-title">ส่งคำอวยพรของคุณ 🎀</p>
+        <div class="f-grp"><label for="wname">ชื่อของคุณ</label><input type="text" id="wname" placeholder="กรอกชื่อที่นี่..." autocomplete="name"/></div>
+        <div class="f-grp"><label for="wtxt">คำอวยพร</label><textarea id="wtxt" placeholder="เขียนคำอวยพรของคุณที่นี่..."></textarea></div>
+        <button class="f-btn" onclick="addWish()" type="button">ส่งคำอวยพร 🍒</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer>
+    <div class="f-names">POP &amp; NUT</div>
+    <p class="f-date">19 ธันวาคม 2569 · kittiya &amp; theera</p>
+    <div class="f-cherries" aria-hidden="true">🍒</div>
+    <p class="f-copy">Made with love · Pre-Wedding Invitation</p>
+  </footer>
+</div>
+
+<!-- LIGHTBOX -->
+<div id="lb" role="dialog" aria-modal="true" aria-label="ดูรูปภาพ" onclick="lbBg(event)">
+  <button class="lb-b lb-close" onclick="closeLb()" aria-label="ปิด">&times;</button>
+  <button class="lb-b lb-prev" onclick="lbNav(-1)" aria-label="ก่อนหน้า">&#8249;</button>
+  <img id="lb-img" src="" alt="Pre-wedding photo"/>
+  <button class="lb-b lb-next" onclick="lbNav(1)" aria-label="ถัดไป">&#8250;</button>
+</div>
+
+<script>
+/* ── SONGS ── */
+const SONGS = [
+  { title:'เรื่องราวความรักในตำนาน', artist:'YOUNGOHM ft. GAVIN.D',              id:'9WEpFzc_nXk' },
+  { title:'เสือสิ้นลาย',             artist:'F.HERO ft. P-Hot, YOUNGOHM, FYMME', id:'8Ei9iJCwTi0' },
+  { title:'จอร์จ ซาร่า', artist:'Masketeer X Sleep Flowz X JKR',                 id:'Q7HpfFtQceo' },
+  { title:'มากกว่ารัก',              artist:'SARAN X BlackHeart',                 id:'KM52dCm740I' },
+  { title:"Victoria's Secret",       artist:'DIAMOND MQT',                       id:'gigFy7XJbKk' },
+];
+let cur=0, playing=false, ytP=null, ytOK=false, progInterval=null;
+
+/* Load YT API */
+const sc=document.createElement('script'); sc.src='https://www.youtube.com/iframe_api'; document.head.appendChild(sc);
+const yd=document.createElement('div'); yd.style.cssText='position:fixed;bottom:-9999px;left:-9999px;width:1px;height:1px;'; yd.id='yt-h'; document.body.appendChild(yd);
+
+window.onYouTubeIframeAPIReady=()=>{
+  ytP=new YT.Player('yt-h',{videoId:SONGS[0].id,playerVars:{autoplay:0,controls:0},
+    events:{
+      onReady:()=>{ ytOK=true; setVol(document.getElementById('vol').value); },
+      onStateChange:e=>{
+        if(e.data===YT.PlayerState.ENDED) nextS();
+        if(e.data===YT.PlayerState.PLAYING) startProg();
+        if(e.data===YT.PlayerState.PAUSED||e.data===YT.PlayerState.ENDED) stopProg();
+      }
+    }
+  });
+};
+
+/* ── PROGRESS ── */
+function fmtTime(s){ s=Math.floor(s||0); return Math.floor(s/60)+':'+(s%60<10?'0':'')+s%60; }
+function startProg(){
+  stopProg();
+  progInterval=setInterval(()=>{
+    if(!ytOK||!ytP.getDuration) return;
+    const cur=ytP.getCurrentTime()||0, dur=ytP.getDuration()||0;
+    const pct=dur?cur/dur*100:0;
+    document.getElementById('mp-fill').style.width=pct+'%';
+    document.getElementById('mp-thumb').style.left=pct+'%';
+    document.getElementById('mp-cur').textContent=fmtTime(cur);
+    document.getElementById('mp-dur').textContent=fmtTime(dur);
+  },500);
+}
+function stopProg(){ clearInterval(progInterval); }
+function seekTo(e){
+  if(!ytOK) return;
+  const rect=document.getElementById('mp-track').getBoundingClientRect();
+  const pct=(e.clientX-rect.left)/rect.width;
+  ytP.seekTo(ytP.getDuration()*pct,true);
+}
+
+/* ── CONTROLS ── */
+function togglePlay(){
+  if(!ytOK) return;
+  playing?ytP.pauseVideo():ytP.playVideo();
+  playing=!playing;
+  document.getElementById('playico').innerHTML=playing
+    ?'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+    :'<path d="M8 5v14l11-7z"/>';
+  document.getElementById('vinyl').classList.toggle('spin',playing);
+  document.getElementById('p-artist').textContent=playing?SONGS[cur].artist:'หยุดชั่วคราว';
+}
+
+function pickSong(i){
+  cur=i;
+  document.querySelectorAll('.p-song').forEach((el,idx)=>el.classList.toggle('on',idx===i));
+  document.getElementById('p-title').textContent=SONGS[i].title;
+  document.getElementById('p-artist').textContent=SONGS[i].artist;
+  if(ytOK){
+    ytP.loadVideoById(SONGS[i].id); playing=true;
+    document.getElementById('playico').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+    document.getElementById('vinyl').classList.add('spin');
+    document.getElementById('p-artist').textContent=SONGS[i].artist;
+  }
+  /* close playlist after picking */
+  document.getElementById('mp-playlist').classList.remove('open');
+}
+
+function prevS(){ pickSong((cur-1+SONGS.length)%SONGS.length); }
+function nextS(){ pickSong((cur+1)%SONGS.length); }
+function setVol(v){ if(ytOK) ytP.setVolume(v*100); }
+
+/* ── PLAYER OPEN / PLAYLIST ── */
+function openPlayer(){
+  document.getElementById('music-player').classList.add('visible');
+  document.getElementById('mp-fab').classList.add('hide');
+  /* auto-pick first song */
+  if(!playing && ytOK){ pickSong(0); }
+}
+let plOpen=false;
+function togglePlaylist(){
+  plOpen=!plOpen;
+  document.getElementById('mp-playlist').classList.toggle('open',plOpen);
+}
+
+/* ── ENVELOPE ── */
+function openEnv(){
+  const e=document.getElementById('env-screen');
+  e.classList.add('out');
+  setTimeout(()=>{e.style.display='none';},900);
+}
+
+/* ── COUNTDOWN ── */
+const TARGET=new Date('2026-12-19T17:00:00+07:00');
+function tick(){
+  const diff=TARGET-Date.now();
+  if(diff<=0){document.getElementById('countdown').innerHTML='<span style="font-family:\'Dancing Script\',cursive;font-size:clamp(2rem,5vw,3rem);color:var(--red)">Happy Wedding Day! 🍒</span>';return;}
+  const pad=n=>String(n).padStart(2,'0');
+  document.getElementById('cd-d').textContent=pad(Math.floor(diff/86400000));
+  document.getElementById('cd-h').textContent=pad(Math.floor(diff%86400000/3600000));
+  document.getElementById('cd-m').textContent=pad(Math.floor(diff%3600000/60000));
+  document.getElementById('cd-s').textContent=pad(Math.floor(diff%60000/1000));
+}
+tick();setInterval(tick,1000);
+
+/* ── SCROLL REVEAL ── */
+const ro=new IntersectionObserver(es=>{es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ro.unobserve(e.target);}});},{threshold:0.12});
+document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
+
+/* ── LIGHTBOX ── */
+const PHOTOS=['photos/01.jpg','photos/02.jpg','photos/03.jpg','photos/04.jpg','photos/05.jpg','photos/06.jpg'];
+let lbCur=0;
+function openLb(i){lbCur=i;const img=document.getElementById('lb-img');img.src=PHOTOS[i];img.onerror=()=>{img.src='';img.alt='Photo '+(i+1)+' — ใส่รูปที่ photos/0'+(i+1)+'.jpg';};document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
+function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
+function lbBg(e){if(e.target===document.getElementById('lb'))closeLb();}
+function lbNav(d){openLb((lbCur+d+PHOTOS.length)%PHOTOS.length);}
+document.addEventListener('keydown',e=>{if(!document.getElementById('lb').classList.contains('open'))return;if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='ArrowRight')lbNav(1);});
+
+/* ── WISHES ── */
+function addWish(){
+  const n=document.getElementById('wname').value.trim();
+  const t=document.getElementById('wtxt').value.trim();
+  if(!n||!t){alert('กรุณากรอกชื่อและคำอวยพรก่อนนะคะ 🍒');return;}
+  const g=document.getElementById('w-grid');
+  const c=document.createElement('div');c.className='w-card';
+  c.innerHTML=`<span class="w-q">"</span><p class="w-txt">${t.replace(/</g,'&lt;')}</p><p class="w-from">— ${n.replace(/</g,'&lt;')}</p>`;
+  g.insertBefore(c,g.firstChild);c.scrollIntoView({behavior:'smooth',block:'center'});
+  document.getElementById('wname').value='';document.getElementById('wtxt').value='';
+}
+
+/* ── CHERRY CONFETTI ── */
+(function(){
+  const cv=document.getElementById('confetti-canvas');
+  const cx=cv.getContext('2d');
+  const resize=()=>{cv.width=innerWidth;cv.height=innerHeight;};
+  addEventListener('resize',resize);resize();
+  const COLORS=['rgba(139,0,0,0.18)','rgba(204,41,41,0.14)','rgba(242,196,196,0.2)','rgba(255,255,255,0.12)','rgba(204,41,41,0.1)'];
+  const pts=[];
+  for(let i=0;i<24;i++)spawn(true);
+  function spawn(rand){pts.push({x:Math.random()*cv.width,y:rand?Math.random()*cv.height:-16,r:Math.random()*5+3,c:COLORS[Math.floor(Math.random()*COLORS.length)],vx:(Math.random()-.5)*.6,vy:Math.random()*.7+.3,a:Math.random()*Math.PI*2,da:(Math.random()-.5)*.03});}
+  function loop(){
+    cx.clearRect(0,0,cv.width,cv.height);
+    for(let i=pts.length-1;i>=0;i--){
+      const p=pts[i];p.x+=p.vx;p.y+=p.vy;p.a+=p.da;
+      cx.save();cx.translate(p.x,p.y);cx.rotate(p.a);
+      cx.fillStyle=p.c;cx.beginPath();
+      // heart shape
+      cx.moveTo(0,p.r*.5);
+      cx.bezierCurveTo(-p.r*1.1,-p.r*.4,-p.r*1.5,p.r,0,p.r*1.9);
+      cx.bezierCurveTo(p.r*1.5,p.r,p.r*1.1,-p.r*.4,0,p.r*.5);
+      cx.fill();cx.restore();
+      if(p.y>cv.height+20){pts.splice(i,1);spawn(false);}
+    }
+    requestAnimationFrame(loop);
+  }
+  loop();
+})();
+</script>
+</body>
+</html>
