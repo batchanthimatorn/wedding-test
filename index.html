@@ -215,6 +215,13 @@
     .mp-vol-icon { color: rgba(255,255,255,0.25); flex-shrink: 0; }
     .mp-vol-slider { flex: 1; accent-color: white; cursor: pointer; height: 3px; }
 
+    /* minimize */
+    #music-player { position: relative; transition: all 0.3s ease; }
+    #music-player.mini { padding: 10px 14px; }
+    #mp-mini { display: none; align-items: center; gap: 10px; }
+    #mp-min-btn svg { transition: transform 0.3s ease; }
+    #music-player.mini #mp-min-btn svg { transform: rotate(180deg); }
+
     /* playlist popup — above player */
     #mp-playlist {
       position: fixed; bottom: 230px; right: 20px; z-index: 999;
@@ -771,46 +778,60 @@
 
 <!-- ══ MUSIC PLAYER BAR ══ -->
 <div id="music-player" role="region" aria-label="เครื่องเล่นเพลง">
+  <!-- Mini bar (shown when minimized) -->
+  <div id="mp-mini" onclick="toggleMinimize()" style="display:none; cursor:pointer;">
+    <div class="mp-thumb" style="width:36px;height:36px;flex-shrink:0;">
+      <div class="mp-thumb-vinyl" id="vinyl-mini" style="width:28px;height:28px;"><div class="mp-thumb-dot" style="width:8px;height:8px;"></div></div>
+    </div>
+    <div style="flex:1;min-width:0;">
+      <div id="mini-title" style="font-size:11px;font-weight:700;color:white;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;"></div>
+    </div>
+    <button id="mini-playbtn" onclick="event.stopPropagation();togglePlay()" style="background:white;border:none;border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#1a0303;cursor:pointer;flex-shrink:0;">
+      <svg id="mini-playico" width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+    </button>
+  </div>
+  <!-- Minimize button -->
+  <button id="mp-min-btn" onclick="toggleMinimize()" aria-label="ย่อ/ขยาย" style="position:absolute;top:10px;left:12px;background:none;border:none;cursor:pointer;color:rgba(255,255,255,0.35);padding:4px;display:flex;align-items:center;justify-content:center;">
+    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="18 15 12 9 6 15"/></svg>
+  </button>
   <!-- Now Playing -->
-  <div class="mp-nowplaying">
-    <div class="mp-thumb">
-      <div class="mp-thumb-vinyl" id="vinyl"><div class="mp-thumb-dot"></div></div>
+  <div id="mp-full-wrap">
+    <div class="mp-nowplaying">
+      <div class="mp-thumb">
+        <div class="mp-thumb-vinyl" id="vinyl"><div class="mp-thumb-dot"></div></div>
+      </div>
+      <div class="mp-info">
+        <div class="mp-song-title" id="p-title">เลือกเพลง</div>
+        <div class="mp-song-artist" id="p-artist">กดปุ่ม Play เพื่อเริ่ม</div>
+      </div>
+      <button class="mp-ctrl" onclick="togglePlaylist()" aria-label="รายการเพลง" style="color:rgba(255,255,255,0.5)">
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
+      </button>
     </div>
-    <div class="mp-info">
-      <div class="mp-song-title" id="p-title">เลือกเพลง</div>
-      <div class="mp-song-artist" id="p-artist">กดที่ 🎵 เพื่อเริ่มต้น</div>
+    <div class="mp-progress-wrap">
+      <span class="mp-time" id="mp-cur">0:00</span>
+      <div class="mp-bar-track" id="mp-track" onclick="seekTo(event)">
+        <div class="mp-bar-fill" id="mp-fill"></div>
+        <div class="mp-bar-thumb" id="mp-thumb"></div>
+      </div>
+      <span class="mp-time right" id="mp-dur">0:00</span>
     </div>
-    <!-- playlist toggle -->
-    <button class="mp-ctrl" onclick="togglePlaylist()" aria-label="รายการเพลง" style="color:rgba(255,255,255,0.5)">
-      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="8" y1="6" x2="21" y2="6"/><line x1="8" y1="12" x2="21" y2="12"/><line x1="8" y1="18" x2="21" y2="18"/><line x1="3" y1="6" x2="3.01" y2="6"/><line x1="3" y1="12" x2="3.01" y2="12"/><line x1="3" y1="18" x2="3.01" y2="18"/></svg>
-    </button>
-  </div>
-  <!-- Progress -->
-  <div class="mp-progress-wrap">
-    <span class="mp-time" id="mp-cur">0:00</span>
-    <div class="mp-bar-track" id="mp-track" onclick="seekTo(event)">
-      <div class="mp-bar-fill" id="mp-fill"></div>
-      <div class="mp-bar-thumb" id="mp-thumb"></div>
+    <div class="mp-controls">
+      <button class="mp-ctrl" onclick="prevS()" aria-label="ก่อนหน้า">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
+      </button>
+      <button class="mp-ctrl play-main" id="playbtn" onclick="togglePlay()" aria-label="เล่น/หยุด">
+        <svg id="playico" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+      </button>
+      <button class="mp-ctrl" onclick="nextS()" aria-label="ถัดไป">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
+      </button>
     </div>
-    <span class="mp-time right" id="mp-dur">0:00</span>
-  </div>
-  <!-- Controls -->
-  <div class="mp-controls">
-    <button class="mp-ctrl" onclick="prevS()" aria-label="ก่อนหน้า">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 6h2v12H6zm3.5 6 8.5 6V6z"/></svg>
-    </button>
-    <button class="mp-ctrl play-main" id="playbtn" onclick="togglePlay()" aria-label="เล่น/หยุด">
-      <svg id="playico" width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-    </button>
-    <button class="mp-ctrl" onclick="nextS()" aria-label="ถัดไป">
-      <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor"><path d="M6 18l8.5-6L6 6v12zM16 6v12h2V6h-2z"/></svg>
-    </button>
-  </div>
-  <!-- Volume -->
-  <div class="mp-vol-row">
-    <svg class="mp-vol-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.7-4.1v8.2A4.5 4.5 0 0016.5 12z"/></svg>
-    <input type="range" class="mp-vol-slider" id="vol" min="0" max="1" step="0.05" value="0.6" aria-label="ระดับเสียง" oninput="setVol(this.value)">
-    <svg class="mp-vol-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.7-4.1v8.2A4.5 4.5 0 0016.5 12zM14 3.23v2.06a7 7 0 010 13.42v2.06A9 9 0 0014 3.23z"/></svg>
+    <div class="mp-vol-row">
+      <svg class="mp-vol-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.7-4.1v8.2A4.5 4.5 0 0016.5 12z"/></svg>
+      <input type="range" class="mp-vol-slider" id="vol" min="0" max="1" step="0.05" value="0.6" aria-label="ระดับเสียง" oninput="setVol(this.value)">
+      <svg class="mp-vol-icon" width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M3 9v6h4l5 5V4L7 9H3zm13.5 3a4.5 4.5 0 00-2.7-4.1v8.2A4.5 4.5 0 0016.5 12zM14 3.23v2.06a7 7 0 010 13.42v2.06A9 9 0 0014 3.23z"/></svg>
+    </div>
   </div>
 </div>
 
@@ -1092,9 +1113,11 @@ window.onYouTubeIframeAPIReady=()=>{
         if(e.data===YT.PlayerState.ENDED){ nextS(); return; }
         const isPlaying=e.data===YT.PlayerState.PLAYING;
         playing=isPlaying;
-        document.getElementById('playico').innerHTML=isPlaying
+        const icoHtml=isPlaying
           ?'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
           :'<path d="M8 5v14l11-7z"/>';
+        document.getElementById('playico').innerHTML=icoHtml;
+        document.getElementById('mini-playico').innerHTML=icoHtml;
         document.getElementById('vinyl').classList.toggle('spin',isPlaying);
         document.getElementById('p-artist').textContent=isPlaying?SONGS[cur].artist:'หยุดชั่วคราว';
         if(isPlaying) startProg(); else stopProg();
@@ -1163,6 +1186,20 @@ function openPlayer(){
   /* auto-pick first song */
   if(!playing && ytOK){ pickSong(0); }
 }
+let minimized=false;
+function toggleMinimize(){
+  minimized=!minimized;
+  document.getElementById('music-player').classList.toggle('mini',minimized);
+  document.getElementById('mp-full-wrap').style.display=minimized?'none':'block';
+  const mini=document.getElementById('mp-mini');
+  mini.style.display=minimized?'flex':'none';
+  if(minimized){
+    document.getElementById('mini-title').textContent=document.getElementById('p-title').textContent;
+    document.getElementById('mini-playico').innerHTML=document.getElementById('playico').innerHTML;
+    if(plOpen) togglePlaylist();
+  }
+}
+
 let plOpen=false;
 function togglePlaylist(){
   plOpen=!plOpen;
@@ -1174,6 +1211,8 @@ function openEnv(){
   const e=document.getElementById('env-screen');
   e.classList.add('out');
   setTimeout(()=>{e.style.display='none';},900);
+  /* autoplay เพลงทันทีที่ user กด open — นับเป็น gesture */
+  if(ytOK) ytP.playVideo();
 }
 
 /* ── COUNTDOWN ── */
