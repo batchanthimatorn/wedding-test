@@ -1087,7 +1087,7 @@ const yd=document.createElement('div'); yd.style.cssText='position:fixed;bottom:
 window.onYouTubeIframeAPIReady=()=>{
   ytP=new YT.Player('yt-h',{videoId:SONGS[0].id,playerVars:{autoplay:0,controls:0},
     events:{
-      onReady:()=>{ ytOK=true; setVol(document.getElementById('vol').value); pickSong(0); },
+      onReady:()=>{ ytOK=true; setVol(document.getElementById('vol').value); pickSong(0, false); },
       onStateChange:e=>{
         if(e.data===YT.PlayerState.ENDED) nextS();
         if(e.data===YT.PlayerState.PLAYING) startProg();
@@ -1131,16 +1131,21 @@ function togglePlay(){
   document.getElementById('p-artist').textContent=playing?SONGS[cur].artist:'หยุดชั่วคราว';
 }
 
-function pickSong(i){
+function pickSong(i, autoplay=true){
   cur=i;
   document.querySelectorAll('.p-song').forEach((el,idx)=>el.classList.toggle('on',idx===i));
   document.getElementById('p-title').textContent=SONGS[i].title;
   document.getElementById('p-artist').textContent=SONGS[i].artist;
   if(ytOK){
-    ytP.loadVideoById(SONGS[i].id); playing=true;
-    document.getElementById('playico').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-    document.getElementById('vinyl').classList.add('spin');
-    document.getElementById('p-artist').textContent=SONGS[i].artist;
+    if(autoplay){
+      ytP.loadVideoById(SONGS[i].id); playing=true;
+      document.getElementById('playico').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
+      document.getElementById('vinyl').classList.add('spin');
+    } else {
+      ytP.cueVideoById(SONGS[i].id); playing=false;
+      document.getElementById('playico').innerHTML='<path d="M8 5v14l11-7z"/>';
+      document.getElementById('vinyl').classList.remove('spin');
+    }
   }
   /* close playlist after picking */
   document.getElementById('mp-playlist').classList.remove('open');
