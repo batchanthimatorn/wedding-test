@@ -139,6 +139,28 @@
     }
     #mp-fab { display: none !important; }
 
+    /* มือถือ — bottom bar เต็มความกว้าง */
+    @media (max-width: 480px) {
+      #music-player {
+        bottom: 0; right: 0; left: 0;
+        width: 100%;
+        border-radius: 20px 20px 0 0;
+        padding: 14px 20px calc(env(safe-area-inset-bottom, 0px) + 14px);
+      }
+      #music-player.mini {
+        padding: 10px 20px calc(env(safe-area-inset-bottom, 0px) + 10px);
+      }
+      #mp-playlist {
+        left: 0 !important; right: 0 !important;
+        width: 100% !important;
+        max-height: 50vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        bottom: 0 !important;
+      }
+      /* เพิ่ม padding ด้านล่างให้ content ไม่ถูกบัง */
+      #main { padding-bottom: 200px; }
+    }
+
     /* vinyl + song info row */
     .mp-nowplaying {
       display: flex; align-items: center; gap: 13px; margin-bottom: 14px;
