@@ -1089,9 +1089,15 @@ window.onYouTubeIframeAPIReady=()=>{
     events:{
       onReady:()=>{ ytOK=true; setVol(document.getElementById('vol').value); pickSong(0, false); },
       onStateChange:e=>{
-        if(e.data===YT.PlayerState.ENDED) nextS();
-        if(e.data===YT.PlayerState.PLAYING) startProg();
-        if(e.data===YT.PlayerState.PAUSED||e.data===YT.PlayerState.ENDED) stopProg();
+        if(e.data===YT.PlayerState.ENDED){ nextS(); return; }
+        const isPlaying=e.data===YT.PlayerState.PLAYING;
+        playing=isPlaying;
+        document.getElementById('playico').innerHTML=isPlaying
+          ?'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
+          :'<path d="M8 5v14l11-7z"/>';
+        document.getElementById('vinyl').classList.toggle('spin',isPlaying);
+        document.getElementById('p-artist').textContent=isPlaying?SONGS[cur].artist:'หยุดชั่วคราว';
+        if(isPlaying) startProg(); else stopProg();
       }
     }
   });
@@ -1122,13 +1128,12 @@ function seekTo(e){
 /* ── CONTROLS ── */
 function togglePlay(){
   if(!ytOK) return;
-  playing?ytP.pauseVideo():ytP.playVideo();
-  playing=!playing;
-  document.getElementById('playico').innerHTML=playing
-    ?'<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>'
-    :'<path d="M8 5v14l11-7z"/>';
-  document.getElementById('vinyl').classList.toggle('spin',playing);
-  document.getElementById('p-artist').textContent=playing?SONGS[cur].artist:'หยุดชั่วคราว';
+  const state=ytP.getPlayerState();
+  if(state===YT.PlayerState.PLAYING){
+    ytP.pauseVideo();
+  } else {
+    ytP.playVideo();
+  }
 }
 
 function pickSong(i, autoplay=true){
@@ -1138,13 +1143,9 @@ function pickSong(i, autoplay=true){
   document.getElementById('p-artist').textContent=SONGS[i].artist;
   if(ytOK){
     if(autoplay){
-      ytP.loadVideoById(SONGS[i].id); playing=true;
-      document.getElementById('playico').innerHTML='<rect x="6" y="4" width="4" height="16"/><rect x="14" y="4" width="4" height="16"/>';
-      document.getElementById('vinyl').classList.add('spin');
+      ytP.loadVideoById(SONGS[i].id);
     } else {
-      ytP.cueVideoById(SONGS[i].id); playing=false;
-      document.getElementById('playico').innerHTML='<path d="M8 5v14l11-7z"/>';
-      document.getElementById('vinyl').classList.remove('spin');
+      ytP.cueVideoById(SONGS[i].id);
     }
   }
   /* close playlist after picking */
