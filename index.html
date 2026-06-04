@@ -1263,6 +1263,18 @@ function openLb(i){lbCur=i;const img=document.getElementById('lb-img');img.src=P
 function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
 function lbBg(e){if(e.target===document.getElementById('lb'))closeLb();}
 function lbNav(d){openLb((lbCur+d+PHOTOS.length)%PHOTOS.length);}
+/* กดนอก player → ย่อเป็น FAB */
+document.addEventListener('click',e=>{
+  const player=document.getElementById('music-player');
+  const playlist=document.getElementById('mp-playlist');
+  const fab=document.getElementById('mp-fab');
+  if(!minimized && player.classList.contains('visible')){
+    if(!player.contains(e.target) && !playlist.contains(e.target) && !fab.contains(e.target)){
+      toggleMinimize();
+    }
+  }
+});
+
 document.addEventListener('keydown',e=>{if(!document.getElementById('lb').classList.contains('open'))return;if(e.key==='Escape')closeLb();if(e.key==='ArrowLeft')lbNav(-1);if(e.key==='ArrowRight')lbNav(1);});
 
 /* ── WISHES ── */
