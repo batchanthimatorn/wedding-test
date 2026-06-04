@@ -1268,6 +1268,7 @@ function openEnv(){
   const e=document.getElementById('env-screen');
   e.classList.add('out');
   setTimeout(()=>{e.style.display='none';},900);
+  if(ytOK) ytP.playVideo();
 }
 
 /* ── COUNTDOWN ── */
