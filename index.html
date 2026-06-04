@@ -241,18 +241,36 @@
 
     /* Mobile */
     @media (max-width: 480px) {
+      /* FAB */
+      #mp-fab { bottom: 20px; right: 20px; width: 52px; height: 52px; }
+
+      /* Player — bottom bar กระชับ */
       #music-player {
         bottom: 0; right: 0; left: 0; width: 100%;
-        border-radius: 24px 24px 0 0;
-        padding: 16px 24px calc(env(safe-area-inset-bottom,0px) + 16px);
+        border-radius: 20px 20px 0 0;
+        padding: 14px 20px calc(env(safe-area-inset-bottom,0px) + 12px);
+        box-shadow: 0 -8px 40px rgba(0,0,0,0.6);
       }
-      #mp-fab { bottom: 24px; right: 20px; }
+      /* ย่อ album art บนมือถือ */
+      .mp-thumb { width: 48px; height: 48px; border-radius: 12px; }
+      .mp-thumb-vinyl { width: 36px; height: 36px; }
+      .mp-thumb-dot { width: 8px; height: 8px; }
+      .mp-song-title { font-size: 13px; }
+      .mp-controls { gap: 4px; margin-bottom: 12px; }
+      .mp-ctrl.play-main { width: 44px; height: 44px; }
+      .mp-vol-row { padding-top: 10px; }
+
+      /* Playlist — slide ขึ้นมาเหนือ player */
       #mp-playlist {
-        left: 0 !important; right: 0 !important; width: 100% !important;
-        max-height: 52vh !important; border-radius: 24px 24px 0 0 !important;
-        bottom: 0 !important;
+        left: 0 !important; right: 0 !important;
+        width: 100% !important;
+        border-radius: 20px 20px 0 0 !important;
+        max-height: 48vh !important;
+        /* bottom คำนวณใน JS */
       }
-      #main { padding-bottom: 200px; }
+
+      /* padding ให้เนื้อหาไม่ถูก player บัง */
+      #main { padding-bottom: 180px; }
     }
 
     /* Playlist popup */
@@ -1224,15 +1242,23 @@ let plOpen=false;
 function togglePlaylist(){
   plOpen=!plOpen;
   if(plOpen){
-    /* วาง playlist เหนือ player หรือ FAB เสมอ */
     const pl=document.getElementById('mp-playlist');
     const player=document.getElementById('music-player');
     const fab=document.getElementById('mp-fab');
-    const ref=player.classList.contains('visible') ? player : fab;
-    const refH=ref.getBoundingClientRect().height;
-    const refBottom=window.innerHeight - ref.getBoundingClientRect().bottom;
-    pl.style.bottom=(refBottom + refH + 10)+'px';
-    pl.style.right='24px';
+    const isMobile=window.innerWidth<=480;
+    if(isMobile && player.classList.contains('visible')){
+      /* บนมือถือ — playlist ลอยเหนือ player bar */
+      const playerH=player.getBoundingClientRect().height;
+      pl.style.bottom=playerH+'px';
+      pl.style.right='0';
+    } else {
+      /* desktop — playlist ลอยเหนือ player/FAB */
+      const ref=player.classList.contains('visible') ? player : fab;
+      const refRect=ref.getBoundingClientRect();
+      const refBottom=window.innerHeight - refRect.bottom;
+      pl.style.bottom=(refBottom + refRect.height + 10)+'px';
+      pl.style.right='24px';
+    }
   }
   document.getElementById('mp-playlist').classList.toggle('open',plOpen);
 }
