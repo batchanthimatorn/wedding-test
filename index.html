@@ -59,7 +59,7 @@
     /* ── CANVAS ── */
     #confetti-canvas {
       position: fixed; inset: 0;
-      pointer-events: none; z-index: 0;
+      pointer-events: none; z-index: 2;
     }
 
     /* ══════════ ENVELOPE SCREEN ══════════ */
@@ -1138,7 +1138,7 @@ const SONGS = [
   { title:'มากกว่ารัก',              artist:'SARAN X BlackHeart',                 id:'KM52dCm740I' },
   { title:"Victoria's Secret",       artist:'DIAMOND MQT',                       id:'gigFy7XJbKk' },
 ];
-let cur=0, playing=false, ytP=null, ytOK=false, progInterval=null;
+let cur=0, playing=false, ytP=null, ytOK=false, progInterval=null, autoPlayPending=false;
 
 /* Load YT API */
 const sc=document.createElement('script'); sc.src='https://www.youtube.com/iframe_api'; document.head.appendChild(sc);
@@ -1147,7 +1147,7 @@ const yd=document.createElement('div'); yd.style.cssText='position:fixed;bottom:
 window.onYouTubeIframeAPIReady=()=>{
   ytP=new YT.Player('yt-h',{videoId:SONGS[0].id,playerVars:{autoplay:0,controls:0},
     events:{
-      onReady:()=>{ ytOK=true; setVol(document.getElementById('vol').value); pickSong(0, false); },
+      onReady:()=>{ ytOK=true; setVol(document.getElementById('vol').value); pickSong(0, false); if(autoPlayPending){ ytP.playVideo(); autoPlayPending=false; } },
       onStateChange:e=>{
         if(e.data===YT.PlayerState.ENDED){ nextS(); return; }
         const isPlaying=e.data===YT.PlayerState.PLAYING;
@@ -1269,6 +1269,7 @@ function openEnv(){
   e.classList.add('out');
   setTimeout(()=>{e.style.display='none';},900);
   if(ytOK) ytP.playVideo();
+  else autoPlayPending=true; /* ถ้า API ยังไม่พร้อม รอแล้วเล่นทันที */
 }
 
 /* ── COUNTDOWN ── */
