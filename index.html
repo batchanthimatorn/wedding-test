@@ -487,25 +487,28 @@
     .g-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(139,0,0,0.2); cursor: pointer; transition: background 0.2s, transform 0.2s; border: none; }
     .g-dot.on { background: var(--cherry); transform: scale(1.3); }
 
-    /* ── MASONRY ── */
-    .g-masonry { column-count: 4; column-gap: 10px; margin-top: 16px; }
-    @media(max-width:900px){ .g-masonry{ column-count:3; } }
-    @media(max-width:600px){ .g-masonry{ column-count:2; } }
-    .g-item {
-      break-inside: avoid; margin-bottom: 10px;
-      border-radius: 12px; overflow: hidden; position: relative;
-      cursor: pointer;
-      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
+    /* ── ALBUM GRID ── */
+    .g-album-grid {
+      display: grid;
+      grid-template-columns: repeat(5, 1fr);
+      gap: 8px; margin-top: 20px;
     }
-    .g-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 36px rgba(139,0,0,0.18); }
-    .g-item img { width: 100%; display: block; object-fit: cover; }
+    @media(max-width:900px){ .g-album-grid{ grid-template-columns: repeat(4,1fr); } }
+    @media(max-width:600px){ .g-album-grid{ grid-template-columns: repeat(3,1fr); gap:5px; } }
+    .g-item {
+      border-radius: 10px; overflow: hidden; position: relative;
+      cursor: pointer; aspect-ratio: 1/1;
+      transition: transform 0.25s, box-shadow 0.25s;
+    }
+    .g-item:hover { transform: scale(1.04); box-shadow: 0 8px 28px rgba(139,0,0,0.22); z-index:1; }
+    .g-item img { width: 100%; height: 100%; display: block; object-fit: cover; }
     .g-over {
-      position: absolute; inset: 0; background: rgba(139,0,0,0.45);
-      opacity: 0; transition: opacity 0.3s;
+      position: absolute; inset: 0; background: rgba(139,0,0,0.4);
+      opacity: 0; transition: opacity 0.25s;
       display: flex; align-items: center; justify-content: center;
     }
     .g-item:hover .g-over { opacity: 1; }
-    .g-over-lbl { font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: white; }
+    .g-over-lbl { font-family: 'Dancing Script', cursive; font-size: 1.2rem; color: white; }
 
     /* ── LIGHTBOX ── */
     #lb {
@@ -925,7 +928,7 @@
       <h2 class="stitle reveal">ภาพถ่าย Pre-Wedding</h2>
       <div class="bow-divider reveal"><div class="bd-line"></div><span class="bd-bow">🎀</span><div class="bd-line"></div></div>
       <p class="sdesc reveal" style="margin:0 auto">ช่วงเวลาดีๆ ที่เราบันทึกไว้ด้วยกัน 🍒</p>
-      <!-- CAROUSEL: first 8 photos -->
+      <!-- CAROUSEL: all 30 photos -->
       <div class="g-carousel reveal">
         <div class="g-carousel-track" id="carousel-track">
           <div class="g-carousel-slide"><img src="imgset1/IMG_7174.JPG" alt="Photo 1" onclick="openLb(0)"></div>
@@ -936,36 +939,66 @@
           <div class="g-carousel-slide"><img src="imgset1/IMG_7152.JPG" alt="Photo 6" onclick="openLb(5)"></div>
           <div class="g-carousel-slide"><img src="imgset1/IMG_7153.JPG" alt="Photo 7" onclick="openLb(6)"></div>
           <div class="g-carousel-slide"><img src="imgset1/IMG_7154.JPG" alt="Photo 8" onclick="openLb(7)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7155.JPG" alt="Photo 9" onclick="openLb(8)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7156.JPG" alt="Photo 10" onclick="openLb(9)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7157.JPG" alt="Photo 11" onclick="openLb(10)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7158.JPG" alt="Photo 12" onclick="openLb(11)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7159.JPG" alt="Photo 13" onclick="openLb(12)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7160.JPG" alt="Photo 14" onclick="openLb(13)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7161.JPG" alt="Photo 15" onclick="openLb(14)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7162.JPG" alt="Photo 16" onclick="openLb(15)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7163.JPG" alt="Photo 17" onclick="openLb(16)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7164.JPG" alt="Photo 18" onclick="openLb(17)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7165.JPG" alt="Photo 19" onclick="openLb(18)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7166.JPG" alt="Photo 20" onclick="openLb(19)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7167.JPG" alt="Photo 21" onclick="openLb(20)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7168.JPG" alt="Photo 22" onclick="openLb(21)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7169.JPG" alt="Photo 23" onclick="openLb(22)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7170.JPG" alt="Photo 24" onclick="openLb(23)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7171.JPG" alt="Photo 25" onclick="openLb(24)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7172.JPG" alt="Photo 26" onclick="openLb(25)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7173.JPG" alt="Photo 27" onclick="openLb(26)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7175.JPG" alt="Photo 28" onclick="openLb(27)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7176.JPG" alt="Photo 29" onclick="openLb(28)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7177.JPG" alt="Photo 30" onclick="openLb(29)"></div>
         </div>
         <button class="g-carousel-btn g-carousel-prev" onclick="carouselMove(-1)" aria-label="Previous">&#8249;</button>
         <button class="g-carousel-btn g-carousel-next" onclick="carouselMove(1)" aria-label="Next">&#8250;</button>
       </div>
       <div class="g-carousel-dots" id="carousel-dots"></div>
 
-      <!-- MASONRY: remaining 22 photos -->
-      <div class="g-masonry" id="gallery">
-        <div class="g-item reveal" onclick="openLb(8)"><img src="imgset1/IMG_7155.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(9)"><img src="imgset1/IMG_7156.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(10)"><img src="imgset1/IMG_7157.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(11)"><img src="imgset1/IMG_7158.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(12)"><img src="imgset1/IMG_7159.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(13)"><img src="imgset1/IMG_7160.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(14)"><img src="imgset1/IMG_7161.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(15)"><img src="imgset1/IMG_7162.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(16)"><img src="imgset1/IMG_7163.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(17)"><img src="imgset1/IMG_7164.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(18)"><img src="imgset1/IMG_7165.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(19)"><img src="imgset1/IMG_7166.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(20)"><img src="imgset1/IMG_7167.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(21)"><img src="imgset1/IMG_7168.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(22)"><img src="imgset1/IMG_7169.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(23)"><img src="imgset1/IMG_7170.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(24)"><img src="imgset1/IMG_7171.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(25)"><img src="imgset1/IMG_7172.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(26)"><img src="imgset1/IMG_7173.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(27)"><img src="imgset1/IMG_7175.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(28)"><img src="imgset1/IMG_7176.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(29)"><img src="imgset1/IMG_7177.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+      <!-- ALBUM GRID -->
+      <div class="g-album-grid reveal" id="gallery">
+        <div class="g-item" onclick="openLb(0)"><img src="imgset1/IMG_7174.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(1)"><img src="imgset1/IMG_7148.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(2)"><img src="imgset1/IMG_7149.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(3)"><img src="imgset1/IMG_7150.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(4)"><img src="imgset1/IMG_7151.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(5)"><img src="imgset1/IMG_7152.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(6)"><img src="imgset1/IMG_7153.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(7)"><img src="imgset1/IMG_7154.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(8)"><img src="imgset1/IMG_7155.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(9)"><img src="imgset1/IMG_7156.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(10)"><img src="imgset1/IMG_7157.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(11)"><img src="imgset1/IMG_7158.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(12)"><img src="imgset1/IMG_7159.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(13)"><img src="imgset1/IMG_7160.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(14)"><img src="imgset1/IMG_7161.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(15)"><img src="imgset1/IMG_7162.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(16)"><img src="imgset1/IMG_7163.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(17)"><img src="imgset1/IMG_7164.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(18)"><img src="imgset1/IMG_7165.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(19)"><img src="imgset1/IMG_7166.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(20)"><img src="imgset1/IMG_7167.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(21)"><img src="imgset1/IMG_7168.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(22)"><img src="imgset1/IMG_7169.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(23)"><img src="imgset1/IMG_7170.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(24)"><img src="imgset1/IMG_7171.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(25)"><img src="imgset1/IMG_7172.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(26)"><img src="imgset1/IMG_7173.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(27)"><img src="imgset1/IMG_7175.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(28)"><img src="imgset1/IMG_7176.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item" onclick="openLb(29)"><img src="imgset1/IMG_7177.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
       </div>
     </div>
   </section>
@@ -1316,7 +1349,7 @@ document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
 const PHOTOS=['imgset1/IMG_7174.JPG','imgset1/IMG_7148.JPG','imgset1/IMG_7149.JPG','imgset1/IMG_7150.JPG','imgset1/IMG_7151.JPG','imgset1/IMG_7152.JPG','imgset1/IMG_7153.JPG','imgset1/IMG_7154.JPG','imgset1/IMG_7155.JPG','imgset1/IMG_7156.JPG','imgset1/IMG_7157.JPG','imgset1/IMG_7158.JPG','imgset1/IMG_7159.JPG','imgset1/IMG_7160.JPG','imgset1/IMG_7161.JPG','imgset1/IMG_7162.JPG','imgset1/IMG_7163.JPG','imgset1/IMG_7164.JPG','imgset1/IMG_7165.JPG','imgset1/IMG_7166.JPG','imgset1/IMG_7167.JPG','imgset1/IMG_7168.JPG','imgset1/IMG_7169.JPG','imgset1/IMG_7170.JPG','imgset1/IMG_7171.JPG','imgset1/IMG_7172.JPG','imgset1/IMG_7173.JPG','imgset1/IMG_7175.JPG','imgset1/IMG_7176.JPG','imgset1/IMG_7177.JPG'];
 // Carousel (3-up, center active)
 let carIdx=0;
-const CAROUSEL_COUNT=8;
+const CAROUSEL_COUNT=30;
 function carouselUpdate(){
   const slides=document.querySelectorAll('.g-carousel-slide');
   const slideW=100/3;
