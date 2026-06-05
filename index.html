@@ -56,6 +56,7 @@
     }
     html { scroll-behavior: smooth; }
     body {
+      overflow: hidden;
       font-family: 'FC Issara Rounded', 'Nunito', sans-serif;
       background: var(--cream);
       color: var(--ink);
@@ -1341,8 +1342,9 @@ function openEnv(){
   const e=document.getElementById('env-screen');
   e.classList.add('out');
   setTimeout(()=>{e.style.display='none';},900);
+  document.body.style.overflow='';
   if(ytOK) ytP.playVideo();
-  else autoPlayPending=true; /* ถ้า API ยังไม่พร้อม รอแล้วเล่นทันที */
+  else autoPlayPending=true;
 }
 
 /* ── COUNTDOWN ── */
