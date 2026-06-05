@@ -432,6 +432,9 @@
     .story-bg { background: var(--white); overflow: hidden; }
     .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-top: 52px; }
     @media(max-width:768px){ .story-grid{ grid-template-columns:1fr; gap:40px; } }
+    .sign-wrap { display:flex; justify-content:center; align-items:center; overflow:hidden; }
+    .sign-img { width:160%; height:auto; display:block; filter:drop-shadow(0 8px 32px rgba(180,0,0,0.15)); margin-left:-30%; max-width:none; }
+    @media(max-width:768px){ .sign-img{ width:100%; margin-left:0; } }
 
     .story-frame {
       position: relative; border-radius: var(--r20); overflow: hidden;
@@ -920,8 +923,8 @@
   <section class="story-bg">
     <div class="wrap">
       <div class="story-grid">
-        <div class="reveal" style="display:flex;justify-content:center;align-items:center;background:#fff;overflow:hidden;">
-          <img src="img/sign.png" alt="POP & NUT heart sign" style="width:160%;height:auto;display:block;filter:drop-shadow(0 8px 32px rgba(180,0,0,0.15));margin-left:-30%;max-width:none;">
+        <div class="reveal sign-wrap">
+          <img src="img/sign.png" alt="POP & NUT heart sign" class="sign-img">
         </div>
         <div class="story-body reveal">
           <span class="pill-tag"><span class="pt-dot"></span>Our Story</span>
@@ -1367,8 +1370,10 @@ let carIdx=0;
 const CAROUSEL_COUNT=30;
 function carouselUpdate(){
   const slides=document.querySelectorAll('.g-carousel-slide');
-  const slideW=100/3;
-  document.getElementById('carousel-track').style.transform=`translateX(-${(carIdx-1)*slideW}%)`;
+  const isMobile=window.innerWidth<=600;
+  const slideW=isMobile?100:100/3;
+  const offset=isMobile?carIdx:(carIdx-1);
+  document.getElementById('carousel-track').style.transform=`translateX(-${offset*slideW}%)`;
   slides.forEach((el,i)=>el.classList.toggle('active',i===carIdx));
   // sliding dots: show 5, center = active
   const dots=document.querySelectorAll('.g-dot');
