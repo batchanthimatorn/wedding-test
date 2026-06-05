@@ -456,37 +456,46 @@
 
     /* ── GALLERY ── */
     .gallery-bg { background: var(--offwhite); }
-    .g-masonry { column-count: 3; column-gap: 14px; margin-top: 52px; }
-    @media(max-width:768px){ .g-masonry{ column-count:2; } }
-    @media(max-width:480px){ .g-masonry{ column-count:1; } }
 
+    /* ── CAROUSEL ── */
+    .g-carousel { position: relative; margin-top: 40px; border-radius: 20px; overflow: hidden; }
+    .g-carousel-track { display: flex; transition: transform 0.5s cubic-bezier(0.4,0,0.2,1); will-change: transform; }
+    .g-carousel-slide { min-width: 100%; position: relative; }
+    .g-carousel-slide img { width: 100%; height: clamp(260px,50vw,520px); object-fit: cover; display: block; cursor: pointer; }
+    .g-carousel-btn {
+      position: absolute; top: 50%; transform: translateY(-50%);
+      background: rgba(255,255,255,0.85); border: none; border-radius: 50%;
+      width: 44px; height: 44px; font-size: 20px; cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 4px 16px rgba(0,0,0,0.15); transition: background 0.2s, transform 0.2s;
+      z-index: 10;
+    }
+    .g-carousel-btn:hover { background: white; transform: translateY(-50%) scale(1.1); }
+    .g-carousel-prev { left: 14px; }
+    .g-carousel-next { right: 14px; }
+    .g-carousel-dots { display: flex; justify-content: center; gap: 8px; margin-top: 14px; }
+    .g-dot { width: 8px; height: 8px; border-radius: 50%; background: rgba(139,0,0,0.2); cursor: pointer; transition: background 0.2s, transform 0.2s; border: none; }
+    .g-dot.on { background: var(--cherry); transform: scale(1.3); }
+
+    /* ── MASONRY ── */
+    .g-masonry { column-count: 4; column-gap: 10px; margin-top: 16px; }
+    @media(max-width:900px){ .g-masonry{ column-count:3; } }
+    @media(max-width:600px){ .g-masonry{ column-count:2; } }
     .g-item {
-      break-inside: avoid; margin-bottom: 14px;
-      border-radius: var(--r20); overflow: hidden; position: relative;
-      cursor: pointer; box-shadow: 0 4px 20px rgba(139,0,0,0.08);
+      break-inside: avoid; margin-bottom: 10px;
+      border-radius: 12px; overflow: hidden; position: relative;
+      cursor: pointer;
       transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s;
-      border: 2px solid transparent;
     }
-    .g-item:hover { transform: translateY(-6px) scale(1.02); box-shadow: 0 16px 48px rgba(139,0,0,0.18); border-color: var(--blush); }
-    .g-item img, .g-ph { width: 100%; display: block; object-fit: cover; }
-    .g-item:nth-child(1) .g-ph { height: 250px; }
-    .g-item:nth-child(2) .g-ph { height: 340px; }
-    .g-item:nth-child(3) .g-ph { height: 220px; }
-    .g-item:nth-child(4) .g-ph { height: 310px; }
-    .g-item:nth-child(5) .g-ph { height: 240px; }
-    .g-item:nth-child(6) .g-ph { height: 350px; }
-    .g-ph {
-      background: linear-gradient(150deg, #FFE8E8, #FFF5F5, #FFE0E0);
-      display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 8px;
-    }
-    .g-ph span { font-size: 11px; letter-spacing: 3px; text-transform: uppercase; color: var(--ink-soft); }
+    .g-item:hover { transform: translateY(-4px) scale(1.02); box-shadow: 0 12px 36px rgba(139,0,0,0.18); }
+    .g-item img { width: 100%; display: block; object-fit: cover; }
     .g-over {
-      position: absolute; inset: 0; background: rgba(139,0,0,0.55);
+      position: absolute; inset: 0; background: rgba(139,0,0,0.45);
       opacity: 0; transition: opacity 0.3s;
       display: flex; align-items: center; justify-content: center;
     }
     .g-item:hover .g-over { opacity: 1; }
-    .g-over-lbl { font-family: 'Dancing Script', cursive; font-size: 1.5rem; color: white; }
+    .g-over-lbl { font-family: 'Dancing Script', cursive; font-size: 1.3rem; color: white; }
 
     /* ── LIGHTBOX ── */
     #lb {
@@ -906,37 +915,47 @@
       <h2 class="stitle reveal">ภาพถ่าย Pre-Wedding</h2>
       <div class="bow-divider reveal"><div class="bd-line"></div><span class="bd-bow">🎀</span><div class="bd-line"></div></div>
       <p class="sdesc reveal" style="margin:0 auto">ช่วงเวลาดีๆ ที่เราบันทึกไว้ด้วยกัน 🍒</p>
+      <!-- CAROUSEL: first 8 photos -->
+      <div class="g-carousel reveal">
+        <div class="g-carousel-track" id="carousel-track">
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7174.JPG" alt="Photo 1" onclick="openLb(0)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7148.JPG" alt="Photo 2" onclick="openLb(1)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7149.JPG" alt="Photo 3" onclick="openLb(2)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7150.JPG" alt="Photo 4" onclick="openLb(3)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7151.JPG" alt="Photo 5" onclick="openLb(4)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7152.JPG" alt="Photo 6" onclick="openLb(5)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7153.JPG" alt="Photo 7" onclick="openLb(6)"></div>
+          <div class="g-carousel-slide"><img src="imgset1/IMG_7154.JPG" alt="Photo 8" onclick="openLb(7)"></div>
+        </div>
+        <button class="g-carousel-btn g-carousel-prev" onclick="carouselMove(-1)" aria-label="Previous">&#8249;</button>
+        <button class="g-carousel-btn g-carousel-next" onclick="carouselMove(1)" aria-label="Next">&#8250;</button>
+      </div>
+      <div class="g-carousel-dots" id="carousel-dots"></div>
+
+      <!-- MASONRY: remaining 22 photos -->
       <div class="g-masonry" id="gallery">
-        <div class="g-item reveal" onclick="openLb(0)"><img src="imgset1/IMG_7174.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(1)"><img src="imgset1/IMG_7148.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(2)"><img src="imgset1/IMG_7149.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(3)"><img src="imgset1/IMG_7150.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(4)"><img src="imgset1/IMG_7151.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(5)"><img src="imgset1/IMG_7152.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(6)"><img src="imgset1/IMG_7153.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(7)"><img src="imgset1/IMG_7154.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(8)"><img src="imgset1/IMG_7155.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(9)"><img src="imgset1/IMG_7156.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(10)"><img src="imgset1/IMG_7157.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(11)"><img src="imgset1/IMG_7158.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(12)"><img src="imgset1/IMG_7159.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(13)"><img src="imgset1/IMG_7160.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(14)"><img src="imgset1/IMG_7161.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(15)"><img src="imgset1/IMG_7162.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(16)"><img src="imgset1/IMG_7163.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(17)"><img src="imgset1/IMG_7164.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(18)"><img src="imgset1/IMG_7165.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(19)"><img src="imgset1/IMG_7166.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(20)"><img src="imgset1/IMG_7167.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(21)"><img src="imgset1/IMG_7168.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(22)"><img src="imgset1/IMG_7169.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(23)"><img src="imgset1/IMG_7170.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(24)"><img src="imgset1/IMG_7171.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(25)"><img src="imgset1/IMG_7172.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(26)"><img src="imgset1/IMG_7173.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(27)"><img src="imgset1/IMG_7175.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(28)"><img src="imgset1/IMG_7176.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
-        <div class="g-item reveal" onclick="openLb(29)"><img src="imgset1/IMG_7177.JPG" width="100%" style="height:260px;object-fit:cover;display:block;"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(8)"><img src="imgset1/IMG_7155.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(9)"><img src="imgset1/IMG_7156.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(10)"><img src="imgset1/IMG_7157.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(11)"><img src="imgset1/IMG_7158.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(12)"><img src="imgset1/IMG_7159.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(13)"><img src="imgset1/IMG_7160.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(14)"><img src="imgset1/IMG_7161.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(15)"><img src="imgset1/IMG_7162.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(16)"><img src="imgset1/IMG_7163.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(17)"><img src="imgset1/IMG_7164.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(18)"><img src="imgset1/IMG_7165.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(19)"><img src="imgset1/IMG_7166.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(20)"><img src="imgset1/IMG_7167.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(21)"><img src="imgset1/IMG_7168.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(22)"><img src="imgset1/IMG_7169.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(23)"><img src="imgset1/IMG_7170.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(24)"><img src="imgset1/IMG_7171.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(25)"><img src="imgset1/IMG_7172.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(26)"><img src="imgset1/IMG_7173.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(27)"><img src="imgset1/IMG_7175.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(28)"><img src="imgset1/IMG_7176.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
+        <div class="g-item reveal" onclick="openLb(29)"><img src="imgset1/IMG_7177.JPG"><div class="g-over"><span class="g-over-lbl">view 🍒</span></div></div>
       </div>
     </div>
   </section>
@@ -1285,6 +1304,25 @@ document.querySelectorAll('.reveal').forEach(el=>ro.observe(el));
 
 /* ── LIGHTBOX ── */
 const PHOTOS=['imgset1/IMG_7174.JPG','imgset1/IMG_7148.JPG','imgset1/IMG_7149.JPG','imgset1/IMG_7150.JPG','imgset1/IMG_7151.JPG','imgset1/IMG_7152.JPG','imgset1/IMG_7153.JPG','imgset1/IMG_7154.JPG','imgset1/IMG_7155.JPG','imgset1/IMG_7156.JPG','imgset1/IMG_7157.JPG','imgset1/IMG_7158.JPG','imgset1/IMG_7159.JPG','imgset1/IMG_7160.JPG','imgset1/IMG_7161.JPG','imgset1/IMG_7162.JPG','imgset1/IMG_7163.JPG','imgset1/IMG_7164.JPG','imgset1/IMG_7165.JPG','imgset1/IMG_7166.JPG','imgset1/IMG_7167.JPG','imgset1/IMG_7168.JPG','imgset1/IMG_7169.JPG','imgset1/IMG_7170.JPG','imgset1/IMG_7171.JPG','imgset1/IMG_7172.JPG','imgset1/IMG_7173.JPG','imgset1/IMG_7175.JPG','imgset1/IMG_7176.JPG','imgset1/IMG_7177.JPG'];
+// Carousel
+let carIdx=0;
+const CAROUSEL_COUNT=8;
+function carouselMove(d){
+  carIdx=(carIdx+d+CAROUSEL_COUNT)%CAROUSEL_COUNT;
+  document.getElementById('carousel-track').style.transform=`translateX(-${carIdx*100}%)`;
+  document.querySelectorAll('.g-dot').forEach((el,i)=>el.classList.toggle('on',i===carIdx));
+}
+document.addEventListener('DOMContentLoaded',()=>{
+  const dotsEl=document.getElementById('carousel-dots');
+  for(let i=0;i<CAROUSEL_COUNT;i++){
+    const d=document.createElement('button');
+    d.className='g-dot'+(i===0?' on':'');
+    d.onclick=()=>{carIdx=i;document.getElementById('carousel-track').style.transform=`translateX(-${i*100}%)`;document.querySelectorAll('.g-dot').forEach((el,j)=>el.classList.toggle('on',j===i));};
+    dotsEl.appendChild(d);
+  }
+  // Auto-advance every 4s
+  setInterval(()=>carouselMove(1),4000);
+});
 let lbCur=0;
 function openLb(i){lbCur=i;const img=document.getElementById('lb-img');img.src=PHOTOS[i];img.onerror=()=>{img.src='';img.alt='Photo '+(i+1)+' — ใส่รูปที่ photos/0'+(i+1)+'.jpg';};document.getElementById('lb').classList.add('open');document.body.style.overflow='hidden';}
 function closeLb(){document.getElementById('lb').classList.remove('open');document.body.style.overflow='';}
