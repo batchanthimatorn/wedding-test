@@ -56,7 +56,6 @@
     }
     html { scroll-behavior: smooth; }
     body {
-      overflow: hidden;
       font-family: 'FC Issara Rounded', 'Nunito', sans-serif;
       background: var(--cream);
       color: var(--ink);
@@ -71,6 +70,7 @@
     }
 
     /* ══════════ ENVELOPE SCREEN ══════════ */
+    body.no-scroll { overflow: hidden; }
     #env-screen {
       position: fixed; inset: 0; z-index: 900;
       display: flex; flex-direction: column;
@@ -771,7 +771,7 @@
     }
   </style>
 </head>
-<body>
+<body class="no-scroll">
 
 <canvas id="confetti-canvas" aria-hidden="true"></canvas>
 
@@ -1342,7 +1342,7 @@ function openEnv(){
   const e=document.getElementById('env-screen');
   e.classList.add('out');
   setTimeout(()=>{e.style.display='none';},900);
-  document.body.style.overflow='';
+  document.body.classList.remove('no-scroll');
   if(ytOK) ytP.playVideo();
   else autoPlayPending=true;
 }
