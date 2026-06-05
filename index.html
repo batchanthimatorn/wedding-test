@@ -479,8 +479,7 @@
     .g-carousel-slide.active { opacity: 1; transform: scale(1); z-index: 2; }
     .g-carousel-slide img { width: 100%; height: clamp(220px,40vw,480px); object-fit: cover; display: block; cursor: pointer; border-radius: 16px; }
     @media(max-width:600px){
-      .g-carousel-slide { min-width: 100%; padding: 0 4px; opacity: 1; transform: scale(1); }
-      .g-carousel-slide:not(.active) { display: none; }
+      .g-carousel-slide { min-width: 100%; padding: 0 4px; opacity: 1 !important; transform: scale(1) !important; }
       .g-carousel-slide img { height: 280px; border-radius: 14px; }
     }
     .g-carousel-btn {
