@@ -429,7 +429,7 @@
     .bd-bow { color: var(--cherry); font-size: 16px; }
 
     /* ── STORY ── */
-    .story-bg { background: var(--white); }
+    .story-bg { background: var(--white); overflow: hidden; }
     .story-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: center; margin-top: 52px; }
     @media(max-width:768px){ .story-grid{ grid-template-columns:1fr; gap:40px; } }
 
@@ -476,8 +476,9 @@
     .g-carousel-slide.active { opacity: 1; transform: scale(1); z-index: 2; }
     .g-carousel-slide img { width: 100%; height: clamp(220px,40vw,480px); object-fit: cover; display: block; cursor: pointer; border-radius: 16px; }
     @media(max-width:600px){
-      .g-carousel-slide { min-width: 80%; }
-      .g-carousel-slide img { height: 260px; }
+      .g-carousel-slide { min-width: 100%; padding: 0 4px; opacity: 1; transform: scale(1); }
+      .g-carousel-slide:not(.active) { display: none; }
+      .g-carousel-slide img { height: 280px; border-radius: 14px; }
     }
     .g-carousel-btn {
       position: absolute; top: 50%; transform: translateY(-50%);
@@ -919,8 +920,8 @@
   <section class="story-bg">
     <div class="wrap">
       <div class="story-grid">
-        <div class="reveal" style="display:flex;justify-content:center;align-items:center;background:#fff;">
-          <img src="img/sign.png" alt="POP & NUT heart sign" style="width:160%;height:auto;display:block;filter:drop-shadow(0 8px 32px rgba(180,0,0,0.15));margin-left:-30%;">
+        <div class="reveal" style="display:flex;justify-content:center;align-items:center;background:#fff;overflow:hidden;">
+          <img src="img/sign.png" alt="POP & NUT heart sign" style="width:160%;height:auto;display:block;filter:drop-shadow(0 8px 32px rgba(180,0,0,0.15));margin-left:-30%;max-width:none;">
         </div>
         <div class="story-body reveal">
           <span class="pill-tag"><span class="pt-dot"></span>Our Story</span>
